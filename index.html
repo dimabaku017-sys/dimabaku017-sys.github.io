@@ -1728,14 +1728,16 @@
   </div>
 </div>
 
-<!-- Новое окно для QR-кода -->
-<div class="modal-bg" id="qrShareModalBg" style="z-index: 10000;">
-  <div class="modal" style="max-width:400px; text-align:center; background: #fff;">
-    <h3 style="color: #000;">Наведи камеру 📷</h3>
-    <div class="sub" style="color: #666;">Отсканируй, чтобы открыть сайт</div>
-    <img src="Qr-Code.jpg" alt="QR Код" style="width: 100%; max-width: 300px; border-radius: 16px; margin: 10px auto; display: block; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <div class="actions" style="margin-top: 20px;">
-      <button class="action-btn cancel full" onclick="closeQRShare()"><span class="ab-emoji">✕</span> Закрыть</button>
+<!-- Новое окно для QR-кода (Максимально белое, без затемнений) -->
+<div class="modal-bg" id="qrShareModalBg" style="z-index: 10000; background: #ffffff !important;">
+  <div class="modal" style="max-width:400px; text-align:center; background: #ffffff !important; box-shadow: none; border: none; padding: 20px;">
+    <h3 style="color: #000; font-size: 24px; margin-bottom: 5px;">📷 Наведи камеру</h3>
+    <div class="sub" style="color: #666; margin-bottom: 20px;">Отсканируй, чтобы открыть сайт</div>
+    <img src="Qr-Code.jpg" alt="QR Код" style="width: 100%; max-width: 320px; border-radius: 12px; display: block; margin: 0 auto; border: 2px solid #eee;">
+    <div class="actions" style="margin-top: 30px;">
+      <button class="action-btn cancel full" onclick="closeQRShare()" style="background: #eee; color: #333; border: none; padding: 15px; font-size: 16px;">
+        <span class="ab-emoji">✕</span> Закрыть
+      </button>
     </div>
   </div>
 </div>
@@ -4151,7 +4153,6 @@ function renderQuarterStats(period) {
 
 // ==================== ШАРИНГ ====================
 let shareImageDataUrl = null;
-let oldBrightness = null;
 
 // 1. Открываем меню выбора
 function openShare() {
@@ -4184,28 +4185,34 @@ function closeShare() {
 }
 
 // 3. Пользователь выбрал "Сайт (QR)"
-function shareWebsite() {
+let wakeLock = null;
+
+async function shareWebsite() {
   closeShareChoice();
   
-  // Делаем экран максимально ярким
-  if (window.screen && window.screen.brightness !== undefined) {
-    // Для некоторых мобильных браузеров
-    oldBrightness = window.screen.brightness;
-    window.screen.brightness = 1.0;
+  // 1. Блокируем экран от выключения (пока открыт QR)
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Экран заблокирован от выключения');
+    }
+  } catch (err) {
+    console.warn('Не удалось включить Wake Lock:', err);
   }
   
-  // Включаем макросъемку (вспышку) если это телефон
-  // (Браузеры не дают напрямую включить фонарик, но мы можем сделать белый фон)
-  
+  // 2. Открываем окно с QR
   document.getElementById("qrShareModalBg").classList.add("active");
 }
 
-function closeQRShare() {
-  // Возвращаем яркость обратно
-  if (window.screen && oldBrightness !== null && window.screen.brightness !== undefined) {
-    window.screen.brightness = oldBrightness;
-    oldBrightness = null;
+async function closeQRShare() {
+  // 1. Снимаем блокировку сна (чтобы телефон мог снова погаснуть)
+  if (wakeLock !== null) {
+    await wakeLock.release();
+    wakeLock = null;
+    console.log('Экран снова может выключаться');
   }
+  
+  // 2. Закрываем окно
   document.getElementById("qrShareModalBg").classList.remove("active");
 }
 function closeShare() { document.getElementById("shareModalBg").classList.remove("active"); shareImageDataUrl = null; }
