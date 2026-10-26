@@ -15,7 +15,7 @@
 <meta name="build-date" content="2026-10-23">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   /* ===== ПЕРЕМЕННЫЕ ТЕМ ===== */
   :root {
@@ -1696,6 +1696,26 @@
   </div>
 </div>
 
+<!-- Выбор: Чем поделиться -->
+<div class="modal-bg" id="shareChoiceModalBg">
+  <div class="modal" style="max-width:400px; text-align:center;">
+    <h3>📤 Поделиться</h3>
+    <div class="sub">Что вы хотите отправить?</div>
+    <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
+      <button class="action-btn done" style="padding:16px; font-size:16px;" onclick="shareGrades()">
+        <span class="ab-emoji">📊</span> Дневником (оценки)
+      </button>
+      <button class="action-btn save" style="padding:16px; font-size:16px;" onclick="shareWebsite()">
+        <span class="ab-emoji">🔗</span> Сайтом (QR-код)
+      </button>
+    </div>
+    <div class="actions">
+      <button class="action-btn cancel full" onclick="closeShareChoice()"><span class="ab-emoji">✕</span> Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- Само окно с картинкой оценок (твое старое) -->
 <div class="modal-bg" id="shareModalBg">
   <div class="modal share-modal">
     <h3>📤 Поделиться дневником</h3>
@@ -1704,6 +1724,18 @@
     <div class="actions">
       <button class="action-btn share-action" onclick="downloadShareImage()"><span class="ab-emoji">💾</span> Скачать</button>
       <button class="action-btn cancel" onclick="closeShare()"><span class="ab-emoji">✕</span> Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Новое окно для QR-кода -->
+<div class="modal-bg" id="qrShareModalBg" style="z-index: 10000;">
+  <div class="modal" style="max-width:400px; text-align:center; background: #fff;">
+    <h3 style="color: #000;">Наведи камеру 📷</h3>
+    <div class="sub" style="color: #666;">Отсканируй, чтобы открыть сайт</div>
+    <img src="Qr-Code.jpg" alt="QR Код" style="width: 100%; max-width: 300px; border-radius: 16px; margin: 10px auto; display: block; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <div class="actions" style="margin-top: 20px;">
+      <button class="action-btn cancel full" onclick="closeQRShare()"><span class="ab-emoji">✕</span> Закрыть</button>
     </div>
   </div>
 </div>
@@ -4119,8 +4151,21 @@ function renderQuarterStats(period) {
 
 // ==================== ШАРИНГ ====================
 let shareImageDataUrl = null;
+let oldBrightness = null;
+
+// 1. Открываем меню выбора
 function openShare() {
   if (!getProfile().showGrades) { showToast("📤 Шаринг", "Недоступно"); return; }
+  document.getElementById("shareChoiceModalBg").classList.add("active");
+}
+
+function closeShareChoice() {
+  document.getElementById("shareChoiceModalBg").classList.remove("active");
+}
+
+// 2. Пользователь выбрал "Оценки"
+function shareGrades() {
+  closeShareChoice();
   document.getElementById("sharePreview").innerHTML = `<div class="share-loading"><div class="spinner"></div><div>Рисуем картинку...</div></div>`;
   document.getElementById("shareModalBg").classList.add("active");
   setTimeout(() => {
@@ -4132,8 +4177,41 @@ function openShare() {
     } catch (err) { console.error(err); }
   }, 100);
 }
+
+function closeShare() { 
+  document.getElementById("shareModalBg").classList.remove("active"); 
+  shareImageDataUrl = null; 
+}
+
+// 3. Пользователь выбрал "Сайт (QR)"
+function shareWebsite() {
+  closeShareChoice();
+  
+  // Делаем экран максимально ярким
+  if (window.screen && window.screen.brightness !== undefined) {
+    // Для некоторых мобильных браузеров
+    oldBrightness = window.screen.brightness;
+    window.screen.brightness = 1.0;
+  }
+  
+  // Включаем макросъемку (вспышку) если это телефон
+  // (Браузеры не дают напрямую включить фонарик, но мы можем сделать белый фон)
+  
+  document.getElementById("qrShareModalBg").classList.add("active");
+}
+
+function closeQRShare() {
+  // Возвращаем яркость обратно
+  if (window.screen && oldBrightness !== null && window.screen.brightness !== undefined) {
+    window.screen.brightness = oldBrightness;
+    oldBrightness = null;
+  }
+  document.getElementById("qrShareModalBg").classList.remove("active");
+}
 function closeShare() { document.getElementById("shareModalBg").classList.remove("active"); shareImageDataUrl = null; }
 document.getElementById("shareModalBg").addEventListener("click", e => { if (e.target.id === "shareModalBg") closeShare(); });
+document.getElementById("shareChoiceModalBg").addEventListener("click", e => { if (e.target.id === "shareChoiceModalBg") closeShareChoice(); });
+document.getElementById("qrShareModalBg").addEventListener("click", e => { if (e.target.id === "qrShareModalBg") closeQRShare(); });
 function generateShareImage() {
   const W = 950, headerH = 130, rowH = 56; // Сделал шире для новой колонки
   const items = [];
