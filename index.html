@@ -1549,6 +1549,37 @@
     table.quarters-table td.quarter-cell:nth-child(5)::before { content: "4 четв."; font-size: 10px; color: var(--text-soft); }
     table.quarters-table td.quarter-cell.final::before { content: "Годовая"; font-size: 10px; color: var(--text-soft); }
   }
+    /* ===== ФИНАЛЬНОЕ ИСПРАВЛЕНИЕ СЛОЕВ ===== */
+  
+  /* Шапка таблицы (Даты) */
+  table.grades-table thead th { 
+    position: sticky !important; 
+    top: 0 !important; 
+    z-index: 10 !important; 
+    background: var(--panel) !important;
+  }
+
+  /* Колонка с предметами (Ячейки) */
+  table.grades-table td.subject-col { 
+    position: sticky !important; 
+    left: 0 !important; 
+    z-index: 20 !important; 
+    background: var(--panel) !important;
+  }
+
+  /* Угловая ячейка "Предмет" */
+  table.grades-table thead th.subject-col { 
+    position: sticky !important; 
+    top: 0 !important; 
+    left: 0 !important; 
+    z-index: 50 !important; /* МАКСИМАЛЬНЫЙ ПРИОРИТЕТ */
+    background: var(--panel) !important;
+  }
+
+  /* То же самое для Четвертных, чтобы не было конфликтов при переключении */
+  table.quarters-table thead th { z-index: 10 !important; background: var(--panel) !important; position: sticky !important; top: 0 !important; }
+  table.quarters-table td.subject-col { z-index: 20 !important; background: var(--panel) !important; position: sticky !important; left: 0 !important; }
+  table.quarters-table thead th.subject-col { z-index: 50 !important; background: var(--panel) !important; }
 </style>
 </head>
 <body>
@@ -3761,8 +3792,8 @@ function render() {
   const dates = getCurrentDates(), grades = getCurrentGrades();
   const headerRow = document.getElementById("headerRow"), tbody = document.getElementById("tbody");
   if (!headerRow || !tbody) return;
-  let html = '<th class="subject-col">Предмет</th>';
-  dates.forEach(d => { html += `<th>${d}</th>`; });
+    let html = '<th class="subject-col" style="z-index: 50 !important; background: var(--panel);">Предмет</th>';
+  dates.forEach(d => { html += `<th style="z-index: 10; background: var(--panel);">${d}</th>`; });
   html += '<th class="avg-col">Средний</th>';
   html += `<th class="quarter-col"><span class="q-name">Четвертная</span><span class="q-sub">${activeQuarter} четв.</span></th>`;
   headerRow.innerHTML = html;
@@ -3771,8 +3802,11 @@ function render() {
     const subjGrades = grades[subj] || {};
     const tr = document.createElement("tr");
     tr.style.animation = `fadeIn .35s var(--ease) ${idx * .015}s backwards`;
-    const tdName = document.createElement("td");
-    tdName.className = "subject-col"; tdName.textContent = subj; tr.appendChild(tdName);
+        const tdName = document.createElement("td");
+    tdName.className = "subject-col"; 
+    tdName.style.zIndex = "20"; // Поднимаем над датами
+    tdName.style.background = "var(--panel)"; 
+    tdName.textContent = subj; tr.appendChild(tdName);
     dates.forEach(d => {
       const td = document.createElement("td"); td.className = "grade-cell";
       const parsed = parseGrade(subjGrades[d]);
