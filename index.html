@@ -338,7 +338,14 @@
   .tab-btn.hidden { display: none; }
   .tab-btn.eva.active { background: linear-gradient(135deg, #ec407a, #ad1457); box-shadow: 0 2px 8px rgba(236,64,122,.3); }
   .tab-content { display: none; margin-top: 12px; }
-  .tab-content.active { display: block; animation: tabIn .3s var(--ease); }
+    .tab-content.active { 
+    display: block; 
+    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important; 
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px) scale(0.98); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
   @keyframes tabIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
 
   /* ===== ПАНЕЛИ УПРАВЛЕНИЯ ===== */
@@ -3804,9 +3811,12 @@ function render() {
     tr.style.animation = `fadeIn .35s var(--ease) ${idx * .015}s backwards`;
         const tdName = document.createElement("td");
     tdName.className = "subject-col"; 
-    tdName.style.zIndex = "20"; // Поднимаем над датами
+    tdName.style.zIndex = "20"; 
     tdName.style.background = "var(--panel)"; 
-    tdName.textContent = subj; tr.appendChild(tdName);
+    tdName.style.cursor = "pointer"; 
+    tdName.textContent = subj; 
+    tdName.onclick = () => openSubjectStats(subj); 
+    tr.appendChild(tdName);
     dates.forEach(d => {
       const td = document.createElement("td"); td.className = "grade-cell";
       const parsed = parseGrade(subjGrades[d]);
@@ -4665,45 +4675,78 @@ function drawStatsChart() {
   if (W === 0 || H === 0) return;
   canvas.width = W * dpr; canvas.height = H * dpr;
   const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+  
   const theme = document.documentElement.getAttribute("data-theme");
   const isDark = theme === "dark" || theme === "amoled";
   const textColor = isDark ? "#94a3b8" : "#475569";
   const gridColor = isDark ? "#1e293b" : "#e2e8f0";
+  
   const qAvgs = [];
   [1,2,3,4].forEach(q => {
     let swv = 0, sw = 0;
     Object.values(state.gradesByQuarter[q] || {}).forEach(sg => Object.values(sg).forEach(v => { const p = parseGrade(v); if (!p) return; const w = getWeight(p); swv += p.grade * w; sw += w; }));
     qAvgs.push(sw > 0 ? swv / sw : null);
   });
+
   const pL = 36, pR = 16, pT = 20, pB = 30;
   const cW = W - pL - pR, cH = H - pT - pB;
   const yMin = 2, yMax = 5;
   const yToPx = v => pT + cH - ((v - yMin) / (yMax - yMin)) * cH;
+  
   ctx.font = "11px Manrope, Segoe UI, Arial"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
   ctx.fillStyle = textColor; ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+  
   for (let v = 2; v <= 5; v += 0.5) { const y = yToPx(v); ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(pL + cW, y); ctx.stroke(); ctx.fillText(v.toFixed(1), pL - 6, y); }
+  
   const xStep = cW / 3;
   const xToPx = i => pL + i * xStep;
   ctx.textAlign = "center"; ctx.textBaseline = "top";
   for (let i = 0; i < 4; i++) { ctx.fillStyle = textColor; ctx.fillText(`${i+1} четв.`, xToPx(i), pT + cH + 8); }
+  
   const valid = qAvgs.map((v, i) => v === null ? null : { x: xToPx(i), y: yToPx(v), v }).filter(p => p);
+
+  // 1. Рисуем заливку (Градиент под линией)
   if (valid.length > 1) {
-    ctx.strokeStyle = "#1976d2"; ctx.lineWidth = 3; ctx.lineJoin = "round";
-    ctx.beginPath(); valid.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.stroke();
+    const grad = ctx.createLinearGradient(0, pT, 0, pT + cH);
+    grad.addColorStop(0, "rgba(99, 102, 241, 0.4)");
+    grad.addColorStop(1, "rgba(99, 102, 241, 0)");
+    
+    ctx.beginPath();
+    ctx.moveTo(valid[0].x, pT + cH);
+    valid.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(valid[valid.length - 1].x, pT + cH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
   }
+
+  // 2. Рисуем линию со свечением
+  if (valid.length > 1) {
+    ctx.strokeStyle = "#6366f1"; ctx.lineWidth = 4; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.shadowColor = "rgba(99, 102, 241, 0.5)";
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 4;
+    
+    ctx.beginPath(); 
+    valid.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); 
+    ctx.stroke();
+    
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+  }
+
+  // 3. Рисуем точки
   valid.forEach(p => {
-    ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fillStyle = "#0d47a1"; ctx.fill();
-    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
-    ctx.fillStyle = textColor; ctx.font = "bold 12px Manrope, Segoe UI, Arial";
+    ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); 
+    ctx.fillStyle = "#fff"; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = "#6366f1"; ctx.stroke();
+    
+    ctx.fillStyle = textColor; ctx.font = "bold 13px Manrope, Segoe UI, Arial";
     ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-    ctx.fillText(p.v.toFixed(2), p.x, p.y - 10);
+    ctx.fillText(p.v.toFixed(2), p.x, p.y - 14);
   });
 }
-let chartResizeTimer = null;
-window.addEventListener("resize", () => {
-  if (chartResizeTimer) clearTimeout(chartResizeTimer);
-  chartResizeTimer = setTimeout(() => { if (document.getElementById("tab-stats").classList.contains("active")) drawStatsChart(); }, 200);
-});
 
 // ==================== ПРОГНОЗ ====================
 function openForecast() {
@@ -6188,6 +6231,115 @@ function initDatePickers() {
 
 // Запускаем при загрузке
 window.addEventListener("load", initDatePickers);
+
+// ==================== СТАТИСТИКА ПО ПРЕДМЕТУ ====================
+function openSubjectStats(subj) {
+  const sg = getCurrentGrades()[subj] || {};
+  
+  let swv = 0, sw = 0, count = 0;
+  let byGrade = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  
+  Object.values(sg).forEach(v => { 
+    const p = parseGrade(v); 
+    if (p) { 
+      const w = getWeight(p); 
+      swv += p.grade * w; 
+      sw += w; 
+      count++;
+      if (byGrade[p.grade] !== undefined) byGrade[p.grade]++;
+    } 
+  });
+  
+  if (count === 0) {
+    showToast("📊 Статистика", "По предмету пока нет оценок");
+    return;
+  }
+  
+  const cur = swv / sw;
+  
+  let color = "#10b981"; 
+  if (cur < 3.5) color = "#ef4444"; 
+  else if (cur < 4.5) color = "#f59e0b";
+
+  // Создаем уникальный ID для этого окна, чтобы не было конфликтов
+  let modal = document.getElementById("subjectStatsModal");
+  if (modal) modal.remove(); // Удаляем старое окно, если было
+
+  modal = document.createElement("div");
+  modal.id = "subjectStatsModal";
+  modal.className = "modal-bg";
+  
+  modal.innerHTML = `
+    <div class="modal" style="max-width:440px; text-align:left;">
+      <h3 style="text-align:center; margin-bottom: 4px;">${subj}</h3>
+      <div class="sub" style="text-align:center; margin-bottom: 24px;">${activeQuarter} четверть</div>
+      
+      <!-- Средний балл -->
+      <div style="text-align:center; margin-bottom: 24px;">
+        <div style="font-size: 48px; font-weight: 900; color: ${color}; line-height: 1;" id="ssmAvg">${cur.toFixed(2)}</div>
+        <div style="font-size: 13px; color: var(--text-soft); margin-top: 8px; font-weight: 600;">Текущий балл</div>
+        <div style="font-size: 12px; color: var(--text-soft); margin-top: 4px;">Всего оценок: ${count}</div>
+      </div>
+
+      <!-- Мини-распределение -->
+      <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+        ${byGrade[5] ? `<div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px;">5 <span style="font-size:12px;">(${byGrade[5]})</span></div>` : ''}
+        ${byGrade[4] ? `<div style="background: rgba(139,195,74,0.1); color: #558b2f; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px;">4 <span style="font-size:12px;">(${byGrade[4]})</span></div>` : ''}
+        ${byGrade[3] ? `<div style="background: rgba(245,158,11,0.1); color: #f59e0b; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px;">3 <span style="font-size:12px;">(${byGrade[3]})</span></div>` : ''}
+        ${byGrade[2] ? `<div style="background: rgba(239,68,68,0.1); color: #ef4444; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px;">2 <span style="font-size:12px;">(${byGrade[2]})</span></div>` : ''}
+      </div>
+
+      <!-- Калькулятор -->
+      <div style="background: var(--primary-soft); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; margin-bottom: 12px;">Что если я получу...</div>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="number" id="calcGrade" min="1" max="5" placeholder="Оценка" value="5" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 16px; font-weight: bold; text-align: center; outline: none;">
+          
+          <select id="calcType" style="flex: 2; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 14px; font-weight: 600; outline: none;">
+            <option value="1">Обычный урок (вес 1)</option>
+            <option value="2">Контрольная (вес 2)</option>
+          </select>
+        </div>
+
+        <button class="action-btn done full" onclick="calculateNewAvg(${swv}, ${sw})" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">Посчитать</button>
+        
+        <div id="calcResult" style="margin-top: 12px; text-align: center; font-weight: bold; font-size: 18px; display: none;"></div>
+      </div>
+
+      <div class="actions"><button class="action-btn cancel full" onclick="document.getElementById('subjectStatsModal').classList.remove('active')">Закрыть</button></div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  modal.classList.add("active");
+}
+
+// Вспомогательная функция для калькулятора
+function calculateNewAvg(currentSum, currentWeight) {
+  const grade = parseInt(document.getElementById("calcGrade").value);
+  const weight = parseInt(document.getElementById("calcType").value);
+  const resultDiv = document.getElementById("calcResult");
+  
+  if (!grade || grade < 1 || grade > 5) {
+    resultDiv.style.display = "block";
+    resultDiv.style.color = "#ef4444";
+    resultDiv.textContent = "Оценка должна быть от 1 до 5";
+    return;
+  }
+
+  const newSum = currentSum + (grade * weight);
+  const newWeight = currentWeight + weight;
+  const newAvg = newSum / newWeight;
+  
+  // Сравниваем со старым
+  const oldAvg = currentSum / currentWeight;
+  const diff = newAvg - oldAvg;
+  
+  resultDiv.style.display = "block";
+  resultDiv.style.color = newAvg < 3.5 ? "#ef4444" : newAvg < 4.5 ? "#f59e0b" : "#10b981";
+  resultDiv.innerHTML = `Новый балл: ${newAvg.toFixed(2)} <br><span style="font-size: 12px; color: var(--text-soft); font-weight: 500;">(${diff > 0 ? '+' : ''}${diff.toFixed(2)} к текущему)</span>`;
+}
 
 // ==================== ЗАПУСК ====================
 init().then(async () => {
