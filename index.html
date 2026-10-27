@@ -406,13 +406,13 @@
     font-size: 13px; 
     position: sticky; 
     left: 0; 
-    z-index: 10; /* Колонка предметов НАД всеми, чтобы даты прятались за ней */
+    z-index: 10; /* Колонка предметов ВЫШЕ дат */
     border-right: 2px solid var(--border); 
   }
 
-  /* Угловая ячейка (Предмет + Даты) */
+  /* Угловая ячейка (Слово "Предмет") - ГЛАВНЫЙ СЛОЙ */
   thead th.subject-col { 
-    z-index: 20; /* Самый высокий слой, чтобы при прокрутке вверх и вбок ничего не наезжало */
+    z-index: 20; /* Самый высокий приоритет */
     background: var(--panel);
   }
   tbody tr:hover { background: color-mix(in srgb, var(--primary) 5%, transparent); }
@@ -621,6 +621,57 @@
   body.hide-bad-grades table.quarters-table td.quarter-cell.final.bad-quarter { 
     color: var(--text-mute) !important; 
     font-size: 14px !important; 
+  }
+
+    /* ===== АДАПТИВНЫЕ ЧЕТВЕРТНЫЕ (ДЛЯ МОБИЛЬНЫХ) ===== */
+  @media (max-width: 768px) {
+    table.quarters-table {
+      min-width: 100% !important; /* Убираем принудительную ширину */
+      display: block; /* Разрешаем блочную верстку */
+    }
+    table.quarters-table thead {
+      display: none; /* Прячем заголовки таблицы */
+    }
+    table.quarters-table tbody, table.quarters-table tr {
+      display: block;
+      width: 100%;
+    }
+    table.quarters-table tr {
+      background: var(--panel);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    table.quarters-table td {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: none !important;
+      padding: 8px 4px;
+      width: 20%; /* По 5 колонок в ряд (или 4, если годовая не влезет) */
+      box-sizing: border-box;
+    }
+    /* Название предмета делаем заголовком карточки */
+    table.quarters-table td.subject-col {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border) !important;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      position: static; /* Отключаем sticky для мобилок */
+    }
+    /* Добавляем подписи к оценкам */
+    table.quarters-table td.quarter-cell:nth-child(2)::before { content: "1 четв."; font-size: 10px; color: var(--text-soft); }
+    table.quarters-table td.quarter-cell:nth-child(3)::before { content: "2 четв."; font-size: 10px; color: var(--text-soft); }
+    table.quarters-table td.quarter-cell:nth-child(4)::before { content: "3 четв."; font-size: 10px; color: var(--text-soft); }
+    table.quarters-table td.quarter-cell:nth-child(5)::before { content: "4 четв."; font-size: 10px; color: var(--text-soft); }
+    table.quarters-table td.quarter-cell.final::before { content: "Годовая"; font-size: 10px; color: var(--text-soft); }
   }
 
   /* ===== РАСПИСАНИЕ ===== */
