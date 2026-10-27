@@ -1061,52 +1061,170 @@
     .lock-panel { padding: 40px 30px 30px; }
     .lock-panel .lock-avatar { width: 100px; height: 100px; }
   }
+    /* ===== ЖИДКОЕ МЕНЮ (LIQUID TABS) ===== */
+  .liquid-tabs-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 500px;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .liquid-tabs {
+    position: relative;
+    display: flex;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 40px;
+    padding: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.5);
+    overflow: hidden;
+  }
+
+  [data-theme="dark"] .liquid-tabs, [data-theme="amoled"] .liquid-tabs {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .liquid-slider {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    width: calc(25% - 3px); 
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 34px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  }
+
+  .liquid-tabs .tab-btn {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    background: transparent !important;
+    border: none;
+    padding: 12px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-soft);
+    border-radius: 34px;
+    transition: color 0.3s ease;
+    box-shadow: none !important;
+    font-weight: 700;
+  }
+
+  .liquid-tabs .tab-btn.active {
+    color: #fff !important;
+  }
+  
+  .liquid-tabs .tab-btn .tb-icon {
+    font-size: 20px;
+    transition: transform 0.3s var(--ease-bounce);
+  }
+  
+  .liquid-tabs .tab-btn.active .tb-icon {
+    transform: scale(1.1) translateY(-2px);
+  }
+
+  .liquid-tabs .tab-btn .tb-text {
+    font-size: 10px;
+    letter-spacing: -0.3px;
+  }
+
+  /* Добавляем отступ контенту снизу, чтобы меню не перекрывало последние строки */
+  .app { padding-bottom: 100px !important; }
 </style>
 </head>
 <body>
 
-<div id="authScreen" class="active">
-  <div class="auth-card">
-    <div class="auth-logo">📘</div>
-    <div class="auth-title">Дневник.ру</div>
-    <div class="auth-sub">Личный дневник ученика</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Вход</button>
-      <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Регистрация</button>
+<div id="authScreen" class="active" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);">
+  <!-- Светящиеся пятна -->
+  <div style="position: absolute; top: -10%; left: -10%; width: 350px; height: 350px; background: #a78bfa; filter: blur(90px); opacity: 0.7; border-radius: 50%;"></div>
+  <div style="position: absolute; bottom: -10%; right: -10%; width: 350px; height: 350px; background: #f472b6; filter: blur(90px); opacity: 0.7; border-radius: 50%;"></div>
+
+  <div class="auth-card" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); color: #fff; position: relative; z-index: 10; padding: 32px 24px;">
+    
+    <!-- Шапка -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px;">
+      <!-- Заголовок: сделали меньше и запретили перенос -->
+      <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap;" id="authWelcomeTitle">С возвращением</div>
+      
+      <!-- Переключатель -->
+      <div class="auth-tabs" style="margin: 0; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 20px; display: flex; gap: 4px; flex-shrink: 0;">
+        <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')" style="padding: 6px 12px; border-radius: 16px; border: none; background: #fff; color: #4f46e5; font-weight: 800; font-size: 11px; transition: 0.3s;">Вход</button>
+        <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')" style="padding: 6px 12px; border-radius: 16px; border: none; background: transparent; color: #fff; font-weight: 800; font-size: 11px; transition: 0.3s;">Регистрация</button>
+      </div>
     </div>
+
+    <div class="auth-sub" id="authSubtitle" style="text-align: left; color: #e2e8f0; font-size: 13px; margin-bottom: 24px; font-weight: 500;">Войди, чтобы продолжить</div>
+
     <div class="auth-error" id="authError"></div>
     <div class="auth-success" id="authSuccess"></div>
+
+    <!-- Форма ВХОДА -->
     <div id="loginForm">
-      <div class="auth-field"><label>Почта</label><input type="email" id="loginEmail" placeholder="example@mail.ru" autocomplete="email"></div>
-      <div class="auth-field">
-        <label>Пароль</label>
-        <div style="position:relative;">
-          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;">
-          <button type="button" class="eye-btn" onclick="togglePassword('loginPassword', this)" title="Показать пароль"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <div class="auth-field" style="margin-bottom: 16px;">
+        <div style="position: relative;">
+          <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #fff; opacity: 0.7; font-size: 16px;">✉️</span>
+          <input type="email" id="loginEmail" placeholder="Электронная почта" autocomplete="email" style="width: 100%; padding: 16px 16px 16px 44px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; outline: none; font-family: inherit;">
         </div>
       </div>
-      <label class="remember-me-row" onclick="toggleRememberMe()">
-        <span class="remember-checkbox" id="rememberCheckbox"></span>
-        <span class="remember-text">Запомнить меня</span>
-        <span class="remember-hint" id="rememberHint"></span>
-      </label>
-      <button class="auth-btn" onclick="doLogin()">Войти</button>
+      <div class="auth-field" style="margin-bottom: 24px;">
+        <div style="position: relative;">
+          <!-- Замок -->
+          <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #fff; opacity: 0.7; font-size: 16px;">🔒</span>
+          <input type="password" id="loginPassword" placeholder="Пароль" autocomplete="current-password" style="width: 100%; padding: 16px 52px 16px 44px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; outline: none; font-family: inherit;">
+          
+          <!-- НОРМАЛЬНАЯ ИКОНКА ГЛАЗА (SVG) -->
+          <button type="button" class="eye-btn" onclick="togglePassword('loginPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #fff; opacity: 0.7; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="auth-btn" onclick="doLogin()" style="width: 100%; padding: 16px; background: #ffffff; color: #4f46e5; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); font-family: inherit;">Войти</button>
     </div>
+
+    <!-- Форма РЕГИСТРАЦИИ -->
     <div id="registerForm" style="display:none;">
-      <div class="auth-field"><label>ФИО</label><input type="text" id="regFio" placeholder="Иванов Иван Иванович"></div>
-      <div class="auth-field"><label>Класс</label><input type="text" id="regClass" placeholder="9Б" maxlength="3"></div>
-      <div class="auth-field"><label>Школа</label><input type="text" id="regSchool" placeholder="Гимназия №10, Воронеж"></div>
-      <div class="auth-field"><label>Телефон</label><input type="tel" id="regPhone" placeholder="+7 950 759-68-56" maxlength="16"></div>
-      <div class="auth-field"><label>Дата рождения</label><input type="date" id="regBirth"></div>
-      <div class="auth-field"><label>Почта</label><input type="email" id="regEmail" placeholder="example@mail.ru" autocomplete="email"></div>
-      <div class="auth-field">
-        <label>Пароль</label>
-        <div style="position:relative;">
-          <input type="password" id="regPassword" placeholder="Минимум 6 символов" style="padding-right:44px;">
-          <button type="button" class="eye-btn" onclick="togglePassword('regPassword', this)" title="Показать пароль"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="text" id="regFio" placeholder="ФИО" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="text" id="regClass" placeholder="Класс (например 9Б)" maxlength="3" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="text" id="regSchool" placeholder="Школа" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="tel" id="regPhone" placeholder="Телефон (+7...)" maxlength="16" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="date" id="regBirth" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 12px;">
+        <input type="email" id="regEmail" placeholder="Электронная почта" style="width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+      </div>
+      <div class="auth-field" style="margin-bottom: 16px;">
+        <div style="position: relative;">
+          <input type="password" id="regPassword" placeholder="Пароль" style="width: 100%; padding: 14px 52px 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; color: #fff; font-size: 14px; font-family: inherit;">
+          
+          <!-- НОРМАЛЬНАЯ ИКОНКА ГЛАЗА (SVG) -->
+          <button type="button" class="eye-btn" onclick="togglePassword('regPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #fff; opacity: 0.7; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
       </div>
-      <button class="auth-btn" onclick="doRegister()">Зарегистрироваться</button>
+      <button class="auth-btn" onclick="doRegister()" style="width: 100%; padding: 16px; background: #ffffff; color: #4f46e5; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); font-family: inherit;">Зарегистрироваться</button>
     </div>
   </div>
 </div>
@@ -1178,11 +1296,14 @@
     <div class="risk-items-grid" id="riskItems"></div>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" id="tabBtnGrades" onclick="switchTab('grades', this)">📝 Оценки</button>
-    <button class="tab-btn" id="tabBtnSchedule" onclick="switchTab('schedule', this)">📅 Расписание</button>
-    <button class="tab-btn" id="tabBtnQuarters" onclick="switchTab('quarters', this)">🎓 Четвертные</button>
-    <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats', this)">📊 Статистика</button>
+    <div class="liquid-tabs-container">
+    <div class="liquid-tabs">
+      <div class="liquid-slider" id="liquidSlider"></div>
+      <button class="tab-btn active" id="tabBtnGrades" onclick="switchTab('grades', this)"><span class="tb-icon">📝</span><span class="tb-text">Оценки</span></button>
+      <button class="tab-btn" id="tabBtnSchedule" onclick="switchTab('schedule', this)"><span class="tb-icon">📅</span><span class="tb-text">Расписание</span></button>
+      <button class="tab-btn" id="tabBtnQuarters" onclick="switchTab('quarters', this)"><span class="tb-icon">🎓</span><span class="tb-text">Четвертные</span></button>
+      <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats', this)"><span class="tb-icon">📊</span><span class="tb-text">Статистика</span></button>
+    </div>
   </div>
 
   <div class="tab-content active" id="tab-grades">
@@ -1696,26 +1817,6 @@
   </div>
 </div>
 
-<!-- Выбор: Чем поделиться -->
-<div class="modal-bg" id="shareChoiceModalBg">
-  <div class="modal" style="max-width:400px; text-align:center;">
-    <h3>📤 Поделиться</h3>
-    <div class="sub">Что вы хотите отправить?</div>
-    <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
-      <button class="action-btn done" style="padding:16px; font-size:16px;" onclick="shareGrades()">
-        <span class="ab-emoji">📊</span> Дневником (оценки)
-      </button>
-      <button class="action-btn save" style="padding:16px; font-size:16px;" onclick="shareWebsite()">
-        <span class="ab-emoji">🔗</span> Сайтом (QR-код)
-      </button>
-    </div>
-    <div class="actions">
-      <button class="action-btn cancel full" onclick="closeShareChoice()"><span class="ab-emoji">✕</span> Отмена</button>
-    </div>
-  </div>
-</div>
-
-<!-- Само окно с картинкой оценок (твое старое) -->
 <div class="modal-bg" id="shareModalBg">
   <div class="modal share-modal">
     <h3>📤 Поделиться дневником</h3>
@@ -1724,20 +1825,6 @@
     <div class="actions">
       <button class="action-btn share-action" onclick="downloadShareImage()"><span class="ab-emoji">💾</span> Скачать</button>
       <button class="action-btn cancel" onclick="closeShare()"><span class="ab-emoji">✕</span> Закрыть</button>
-    </div>
-  </div>
-</div>
-
-<!-- Новое окно для QR-кода (Максимально белое, без затемнений) -->
-<div class="modal-bg" id="qrShareModalBg" style="z-index: 10000; background: #ffffff !important;">
-  <div class="modal" style="max-width:400px; text-align:center; background: #ffffff !important; box-shadow: none; border: none; padding: 20px;">
-    <h3 style="color: #000; font-size: 24px; margin-bottom: 5px;">📷 Наведи камеру</h3>
-    <div class="sub" style="color: #666; margin-bottom: 20px;">Отсканируй, чтобы открыть сайт</div>
-    <img src="Qr-Code.jpg" alt="QR Код" style="width: 100%; max-width: 320px; border-radius: 12px; display: block; margin: 0 auto; border: 2px solid #eee;">
-    <div class="actions" style="margin-top: 30px;">
-      <button class="action-btn cancel full" onclick="closeQRShare()" style="background: #eee; color: #333; border: none; padding: 15px; font-size: 16px;">
-        <span class="ab-emoji">✕</span> Закрыть
-      </button>
     </div>
   </div>
 </div>
@@ -1762,6 +1849,19 @@
       <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;line-height:1.5;">Установите «Дневник.ру» как приложение — будет иконка на главном экране и работа офлайн.</div>
       <button class="btn install" style="width:100%;justify-content:center;" onclick="installPWA()">📥 Установить приложение</button>
       <div id="pwaStatus" style="font-size:11px;color:var(--text-mute);margin-top:8px;text-align:center;">Проверяем...</div>
+    </div>
+        <div class="settings-section" style="margin-bottom:14px; padding:6px 14px 10px;">
+      <div class="ss-title"><span class="ss-emoji">🐍</span> Python Модуль</div>
+      <button class="settings-row" onclick="setPythonBackground()">
+        <span class="sr-left">
+          <span class="sr-emoji">✨</span>
+          <span class="sr-text">
+            <b>Сгенерировать фон</b>
+            <span>Красивый градиент через Python</span>
+          </span>
+        </span>
+        <span class="sr-right"></span>
+      </button>
     </div>
     <div class="settings-section" style="margin-bottom:14px; padding:6px 14px 10px;">
       <div class="ss-title"><span class="ss-emoji">🔔</span> Уведомления</div>
@@ -2094,10 +2194,25 @@ function updateStorageKeys() {
 }
 
 function switchAuthTab(tab) {
-  document.getElementById("tabLogin").classList.toggle("active", tab === "login");
-  document.getElementById("tabRegister").classList.toggle("active", tab === "register");
-  document.getElementById("loginForm").style.display = tab === "login" ? "block" : "none";
-  document.getElementById("registerForm").style.display = tab === "register" ? "block" : "none";
+  const isLogin = tab === "login";
+  
+  const btnLogin = document.getElementById("tabLogin");
+  const btnReg = document.getElementById("tabRegister");
+  
+  // Меняем фон кнопок
+  btnLogin.style.background = isLogin ? "#fff" : "transparent";
+  btnLogin.style.color = isLogin ? "#4f46e5" : "#fff";
+  btnReg.style.background = isLogin ? "transparent" : "#fff";
+  btnReg.style.color = isLogin ? "#fff" : "#4f46e5";
+
+  // Меняем заголовки на русском
+  document.getElementById("authWelcomeTitle").textContent = isLogin ? "С возвращением" : "Создать аккаунт";
+  document.getElementById("authSubtitle").textContent = isLogin ? "Войди, чтобы продолжить" : "Присоединяйся — это бесплатно";
+
+  // Показываем нужную форму
+  document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+  document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+  
   hideAuthMsg();
 }
 function showAuthError(msg) {
@@ -4153,20 +4268,8 @@ function renderQuarterStats(period) {
 
 // ==================== ШАРИНГ ====================
 let shareImageDataUrl = null;
-
-// 1. Открываем меню выбора
 function openShare() {
   if (!getProfile().showGrades) { showToast("📤 Шаринг", "Недоступно"); return; }
-  document.getElementById("shareChoiceModalBg").classList.add("active");
-}
-
-function closeShareChoice() {
-  document.getElementById("shareChoiceModalBg").classList.remove("active");
-}
-
-// 2. Пользователь выбрал "Оценки"
-function shareGrades() {
-  closeShareChoice();
   document.getElementById("sharePreview").innerHTML = `<div class="share-loading"><div class="spinner"></div><div>Рисуем картинку...</div></div>`;
   document.getElementById("shareModalBg").classList.add("active");
   setTimeout(() => {
@@ -4178,47 +4281,8 @@ function shareGrades() {
     } catch (err) { console.error(err); }
   }, 100);
 }
-
-function closeShare() { 
-  document.getElementById("shareModalBg").classList.remove("active"); 
-  shareImageDataUrl = null; 
-}
-
-// 3. Пользователь выбрал "Сайт (QR)"
-let wakeLock = null;
-
-async function shareWebsite() {
-  closeShareChoice();
-  
-  // 1. Блокируем экран от выключения (пока открыт QR)
-  try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
-      console.log('Экран заблокирован от выключения');
-    }
-  } catch (err) {
-    console.warn('Не удалось включить Wake Lock:', err);
-  }
-  
-  // 2. Открываем окно с QR
-  document.getElementById("qrShareModalBg").classList.add("active");
-}
-
-async function closeQRShare() {
-  // 1. Снимаем блокировку сна (чтобы телефон мог снова погаснуть)
-  if (wakeLock !== null) {
-    await wakeLock.release();
-    wakeLock = null;
-    console.log('Экран снова может выключаться');
-  }
-  
-  // 2. Закрываем окно
-  document.getElementById("qrShareModalBg").classList.remove("active");
-}
 function closeShare() { document.getElementById("shareModalBg").classList.remove("active"); shareImageDataUrl = null; }
 document.getElementById("shareModalBg").addEventListener("click", e => { if (e.target.id === "shareModalBg") closeShare(); });
-document.getElementById("shareChoiceModalBg").addEventListener("click", e => { if (e.target.id === "shareChoiceModalBg") closeShareChoice(); });
-document.getElementById("qrShareModalBg").addEventListener("click", e => { if (e.target.id === "qrShareModalBg") closeQRShare(); });
 function generateShareImage() {
   const W = 950, headerH = 130, rowH = 56; // Сделал шире для новой колонки
   const items = [];
@@ -5220,6 +5284,40 @@ function closeBackupsModal() {
   document.getElementById("backupsModalBg").classList.remove("active");
 }
 
+// ==================== PYTHON ИНТЕГРАЦИЯ ====================
+async function setPythonBackground() {
+  try {
+    showToast("🐍 Python", "Генерируем красивый фон...");
+    
+    // Делаем запрос к нашему Python-серверу (порт 5000)
+    // Если ты откроешь сайт просто как файл (file://), то нужно указать полный адрес: 'http://127.0.0.1:5000/api/generate-bg'
+    const response = await fetch('http://127.0.0.1:5000/api/generate-bg?c1=%231976d2&c2=%238e24aa&c3=%23ec407a');
+    
+    if (!response.ok) throw new Error("Сервер вернул ошибку");
+    
+    const blob = await response.blob();
+    const reader = new FileReader();
+    
+    reader.onloadend = async () => {
+      const base64data = reader.result;
+      
+      // Сохраняем как фон в наш state (точно так же, как если бы загрузили картинку вручную)
+      state.bgMedia = { type: "image", data: base64data };
+      await saveStateNow();
+      applyBgMedia();
+      showToast("✅ Python", "Фон сгенерирован и установлен!");
+      
+      // Закрываем настройки, чтобы ты увидел результат
+      closeExtraSettings(); 
+    };
+    reader.readAsDataURL(blob);
+    
+  } catch (err) {
+    console.error("Python Error:", err);
+    showToast("⚠️ Ошибка", "Не удалось связаться с Python. Убедись, что сервер app.py запущен.");
+  }
+}
+
 // ==================== ЗАПУСК ====================
 init().then(async () => {
   try {
@@ -5235,6 +5333,44 @@ init().then(async () => {
   } catch (e) {
     setSyncState("error", "Ошибка при запуске");
   }
+});
+// ==================== АНИМАЦИЯ ЖИДКОГО МЕНЮ ====================
+function updateLiquidSlider(btn) {
+  const slider = document.getElementById("liquidSlider");
+  if (!slider || !btn) return;
+  
+  const container = btn.parentElement;
+  const btnRect = btn.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  
+  const left = btnRect.left - containerRect.left;
+  const width = btnRect.width;
+  
+  slider.style.width = width + "px";
+  slider.style.transform = `translateX(${left - 6}px)`;
+}
+
+// Перехватываем клики по меню, чтобы двигать капсулу
+document.querySelectorAll(".liquid-tabs .tab-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".liquid-tabs .tab-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    updateLiquidSlider(this);
+  });
+});
+
+// Инициализация при загрузке (ставим капсулу на первую кнопку)
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const activeBtn = document.querySelector(".liquid-tabs .tab-btn.active");
+    if (activeBtn) updateLiquidSlider(activeBtn);
+  }, 100);
+});
+
+// Обновление при изменении размера экрана
+window.addEventListener("resize", () => {
+  const activeBtn = document.querySelector(".liquid-tabs .tab-btn.active");
+  if (activeBtn) updateLiquidSlider(activeBtn);
 });
 </script>
 </body>
