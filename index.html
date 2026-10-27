@@ -374,33 +374,47 @@
   .quarter-switcher .arrow:disabled { color: var(--text-mute); cursor: not-allowed; opacity: .4; }
   .quarter-switcher .quarter-label { font-weight: 700; color: var(--orange); font-size: 13px; min-width: 100px; text-align: center; padding: 0 6px; }
 
-  /* ===== ТАБЛИЦА ОЦЕНОК ===== */
-  .table-wrap { background: color-mix(in srgb, var(--panel) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow-md); max-height: calc(100vh - 340px); -webkit-overflow-scrolling: touch; }
+    /* ===== ТАБЛИЦА ОЦЕНОК ===== */
+  .table-wrap { 
+    background: color-mix(in srgb, var(--panel) 88%, transparent); 
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+    border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow-md); 
+    max-height: calc(100vh - 340px); -webkit-overflow-scrolling: touch; 
+  }
   table.grades-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 700px; font-size: 12px; }
   table.grades-table th, table.grades-table td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px; text-align: center; vertical-align: middle; }
+  
+  /* Шапка таблицы (Даты) */
   table.grades-table thead th { 
-  background: var(--panel); /* Убрали прозрачность, чтобы даты не просвечивали */
-  position: sticky; 
-  top: 0; 
-  z-index: 5; /* Этот слой остается под колонкой предметов */
-  font-weight: 600; 
-  font-size: 12px; 
-  color: var(--text-soft); 
-  padding: 10px 6px; 
-}
+    background: var(--panel);
+    position: sticky; 
+    top: 0; 
+    z-index: 5; /* Даты находятся под колонкой предметов */
+    font-weight: 600; 
+    font-size: 12px; 
+    color: var(--text-soft); 
+    padding: 10px 6px; 
+  }
+
+  /* Колонка с предметами (Левый столбец) */
   th.subject-col, td.subject-col { 
-  background: var(--panel); /* Сделали фон сплошным */
-  text-align: left; 
-  padding-left: 12px; 
-  min-width: 150px; 
-  font-weight: 600; 
-  font-size: 13px; 
-  position: sticky; 
-  left: 0; 
-  z-index: 6; /* ЭТО ГЛАВНОЕ: теперь предметы всегда перекрывают даты */
-  border-right: 2px solid var(--border); 
-}
-  thead th.subject-col { z-index: 6; }
+    background: var(--panel);
+    text-align: left; 
+    padding-left: 12px; 
+    min-width: 150px; 
+    font-weight: 600; 
+    font-size: 13px; 
+    position: sticky; 
+    left: 0; 
+    z-index: 10; /* Колонка предметов НАД всеми, чтобы даты прятались за ней */
+    border-right: 2px solid var(--border); 
+  }
+
+  /* Угловая ячейка (Предмет + Даты) */
+  thead th.subject-col { 
+    z-index: 20; /* Самый высокий слой, чтобы при прокрутке вверх и вбок ничего не наезжало */
+    background: var(--panel);
+  }
   tbody tr:hover { background: color-mix(in srgb, var(--primary) 5%, transparent); }
   tbody tr:hover td.subject-col { color: var(--primary); }
   th.avg-col, td.avg-col { background: color-mix(in srgb, var(--panel) 95%, var(--bg)); font-weight: bold; font-size: 14px; min-width: 80px; border-left: 2px solid var(--border); }
@@ -516,39 +530,98 @@
   .attest-item .ai-meta .ai-need { color: #ef4444; font-weight: 700; }
   .attest-item .ai-meta .ai-ok { color: #10b981; font-weight: 700; }
 
-  /* ===== ЧЕТВЕРТНЫЕ ===== */
-  table.quarters-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 500px; font-size: 12px; }
-  table.quarters-table th, table.quarters-table td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 8px; text-align: center; vertical-align: middle; }
+    /* ===== ЧЕТВЕРТНЫЕ ===== */
+  table.quarters-table { 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    width: 100%; 
+    min-width: 500px; 
+    font-size: 12px; 
+  }
+  
+  table.quarters-table th, table.quarters-table td { 
+    border-right: 1px solid var(--border); 
+    border-bottom: 1px solid var(--border); 
+    padding: 8px; 
+    text-align: center; 
+    vertical-align: middle; 
+  }
+  
+  /* Шапка таблицы четвертных */
   table.quarters-table thead th { 
-  background: var(--panel); 
-  position: sticky; 
-  top: 0; 
-  z-index: 5; 
-  font-weight: 600; 
-  font-size: 12px; 
-  color: var(--text-soft); 
-  padding: 12px 4px; 
-}
-  table.quarters-table th.subject-col, table.quarters-table td.subject-col { 
-  background: var(--panel); 
-  text-align: left; 
-  padding-left: 12px; 
-  min-width: 160px; 
-  font-weight: 600; 
-  font-size: 13px; 
-  position: sticky; 
-  left: 0; 
-  z-index: 6; /* Поднимаем над шапкой */
-  border-right: 2px solid var(--border); 
-}
-  table.quarters-table td.quarter-cell { cursor: pointer; min-width: 80px; height: 50px; font-size: 19px; font-weight: bold; }
-  table.quarters-table td.quarter-cell:hover { background: var(--primary-soft); transform: scale(1.05); }
-  table.quarters-table td.quarter-cell.final { background: var(--orange-soft); font-size: 21px; cursor: default; }
-  table.quarters-table td.quarter-cell.final.has-grade { background: color-mix(in srgb, #e8f5e9 60%, var(--panel)); }
-  [data-theme="dark"] table.quarters-table td.quarter-cell.final.has-grade, [data-theme="amoled"] table.quarters-table td.quarter-cell.final.has-grade { background: #1a2e1c; }
-  .quarter-weights { font-size: 9px; color: var(--text-mute); font-weight: normal; display: block; margin-top: 2px; }
+    background: var(--panel); 
+    position: sticky; 
+    top: 0; 
+    z-index: 5; /* Шапка под колонкой предметов */
+    font-weight: 600; 
+    font-size: 12px; 
+    color: var(--text-soft); 
+    padding: 12px 4px; 
+  }
+  
+  /* Левая колонка с названиями предметов */
+  table.quarters-table th.subject-col, 
+  table.quarters-table td.subject-col { 
+    background: var(--panel); 
+    text-align: left; 
+    padding-left: 12px; 
+    min-width: 160px; 
+    font-weight: 600; 
+    font-size: 13px; 
+    position: sticky; 
+    left: 0; 
+    z-index: 10; /* Колонка предметов выше шапки */
+    border-right: 2px solid var(--border); 
+  }
+
+  /* Угловая ячейка (Предмет + Четверти) */
+  table.quarters-table thead th.subject-col {
+    z-index: 20; /* Самый высокий слой, чтобы ничего не наезжало */
+  }
+  
+  /* Ячейки с оценками */
+  table.quarters-table td.quarter-cell { 
+    cursor: pointer; 
+    min-width: 80px; 
+    height: 50px; 
+    font-size: 19px; 
+    font-weight: bold; 
+  }
+  
+  table.quarters-table td.quarter-cell:hover { 
+    background: var(--primary-soft); 
+    transform: scale(1.05); 
+  }
+  
+  /* Ячейка годовой оценки */
+  table.quarters-table td.quarter-cell.final { 
+    background: var(--orange-soft); 
+    font-size: 21px; 
+    cursor: default; 
+  }
+  
+  table.quarters-table td.quarter-cell.final.has-grade { 
+    background: color-mix(in srgb, #e8f5e9 60%, var(--panel)); 
+  }
+  
+  [data-theme="dark"] table.quarters-table td.quarter-cell.final.has-grade, 
+  [data-theme="amoled"] table.quarters-table td.quarter-cell.final.has-grade { 
+    background: #1a2e1c; 
+  }
+  
+  .quarter-weights { 
+    font-size: 9px; 
+    color: var(--text-mute); 
+    font-weight: normal; 
+    display: block; 
+    margin-top: 2px; 
+  }
+  
   body.hide-bad-grades table.quarters-table td.quarter-cell.bad-quarter,
-  body.hide-bad-grades table.quarters-table td.quarter-cell.final.bad-quarter { color: var(--text-mute) !important; font-size: 14px !important; }
+  body.hide-bad-grades table.quarters-table td.quarter-cell.final.bad-quarter { 
+    color: var(--text-mute) !important; 
+    font-size: 14px !important; 
+  }
 
   /* ===== РАСПИСАНИЕ ===== */
   .week-info { background: color-mix(in srgb, var(--panel) 82%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: var(--radius); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 13px; box-shadow: var(--shadow-sm); margin-bottom: 12px; }
@@ -960,6 +1033,7 @@
   @keyframes updateBadgePulse { 0%,100% { opacity: 1; } 50% { opacity: .65; } }
   .update-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
   .update-toast-banner {
+    display: none; /* <--- ВОТ ЭТО ДОБАВИТЬ */
     position: fixed;
     bottom: 16px;
     left: 50%;
@@ -979,7 +1053,10 @@
     transition: transform .4s var(--ease-bounce);
     cursor: pointer;
   }
-  .update-toast-banner.show { transform: translateX(-50%) translateY(0); }
+    .update-toast-banner.show { 
+    display: flex; /* <--- ЧТОБЫ ПОЯВЛЯЛСЯ, КОГДА НУЖНО */
+    transform: translateX(-50%) translateY(0); 
+  }
   .update-toast-banner .utb-icon { font-size: 20px; flex-shrink: 0; animation: updateWarnPulse 2s ease-in-out infinite; }
   .update-toast-banner .utb-text { flex: 1; text-align: left; line-height: 1.35; }
   .update-toast-banner .utb-text small { display: block; font-size: 11px; font-weight: 500; opacity: .9; margin-top: 2px; }
@@ -1544,20 +1621,6 @@
     <div class="stats-panel"><div class="sp-title">📊 Распределение оценок</div><div id="statsDist"></div></div>
     <div class="stats-panel"><div class="sp-title">📈 Средний балл по четвертям</div><div class="chart-wrap"><canvas id="statsChart"></canvas></div></div>
   </div>
-</div>
-
-<div class="update-toast-banner" id="updateToastBanner" onclick="openUpdateSection()">
-  <span class="utb-icon">🔄</span>
-  <div class="utb-text">
-    Доступно обновление
-    <small id="updateToastVersion">Версия 0.0.0</small>
-  </div>
-</div>
-
-<div class="pwa-install-banner" id="pwaInstallBanner">
-  <span>📲 Установить приложение?</span>
-  <button onclick="installPWA()">Установить</button>
-  <button onclick="dismissPWA()" style="background:transparent;">✕</button>
 </div>
 
 <div class="modal-bg" id="subjectsEditorBg">
