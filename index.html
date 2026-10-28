@@ -18,6 +18,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
+    /* ===== ИКОНКИ LUCIDE ===== */
+  .lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .lucide-sm { width: 14px; height: 14px; }
+  .lucide-lg { width: 22px; height: 22px; }
+  .lucide-xl { width: 28px; height: 28px; }
+
+  .btn .lucide,
+  .tab-btn .lucide,
+  .action-btn .lucide {
+    width: 16px;
+    height: 16px;
+  }
+
+  .theme-btn .lucide,
+  .settings-close-btn .lucide,
+  .photo-close-btn .lucide {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logo .lucide {
+    width: 22px;
+    height: 22px;
+  }
   /* ===== ПЕРЕМЕННЫЕ ТЕМ ===== */
   :root {
     --primary: #2563eb; --primary-dark: #1e40af; --primary-soft: #eff6ff;
@@ -1588,6 +1618,10 @@
   table.quarters-table thead th { z-index: 10 !important; background: var(--panel) !important; position: sticky !important; top: 0 !important; }
   table.quarters-table td.subject-col { z-index: 20 !important; background: var(--panel) !important; position: sticky !important; left: 0 !important; }
   table.quarters-table thead th.subject-col { z-index: 50 !important; background: var(--panel) !important; }
+  @keyframes titleShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
 </style>
 </head>
 <body>
@@ -1720,7 +1754,7 @@
 <div class="app">
     <div class="header" id="mainHeader">
     <div class="header-left">
-      <div class="logo">📘</div>
+      <div class="logo"><i data-lucide="book-open"></i></div>
       <div>
         <h1 id="headerTitle">Дневник.ру</h1>
         <span class="header-sub" id="headerSub">Электронный дневник</span>
@@ -1728,7 +1762,7 @@
       </div>
     </div>
     <div class="header-right">
-      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Сменить тему">🌙</button>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Сменить тему"><i data-lucide="moon"></i></button>
       <button class="avatar-btn" id="headerAvatarBtn" onclick="openProfile()" title="Профиль"><span id="headerAvatarInner"></span></button>
     </div>
   </div>
@@ -2131,6 +2165,28 @@
           </div>
           <div style="color: var(--text-mute); font-size: 18px;">›</div>
         </div>
+      </div>
+
+      
+      <!-- ИГРОВОЙ ПРОФИЛЬ -->
+      <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); letter-spacing: 1px; text-transform: uppercase; margin: 0 0 8px 16px;">Прогресс</div>
+      <div style="background: var(--panel); border-radius: 24px; padding: 20px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+          <div>
+            <div style="font-size: 24px; font-weight: 900; color: var(--text); line-height: 1;">Уровень <span id="gameLevelText">1</span></div>
+            <div style="font-size: 12px; color: var(--text-soft); font-weight: 700; margin-top: 4px;" id="gameTitleText">Новичок</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 16px; font-weight: 800; color: var(--primary);" id="gameXpText">0 XP</div>
+            <div style="font-size: 11px; color: var(--text-soft);">до след. уровня</div>
+          </div>
+        </div>
+        <div style="width: 100%; height: 12px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+          <div id="gameXpBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 10px; transition: width 0.8s var(--ease-bounce);"></div>
+        </div>
+        <button class="btn" style="width: 100%; justify-content: center; background: var(--primary-soft); color: var(--primary); border: none;" onclick="openBattlePassModal()">
+          🏆 Посмотреть награды и правила
+        </button>
       </div>
 
       <!-- Системные настройки -->
@@ -2559,6 +2615,57 @@
     <div id="backupsList" style="display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto; text-align:left;"></div>
     <div class="actions">
       <button class="action-btn cancel full" onclick="closeBackupsModal()"><span class="ab-emoji">✕</span> Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка Battle Pass -->
+<div class="modal-bg" id="battlePassModalBg">
+  <div class="modal" style="max-width: 440px; text-align: left;">
+    <h3 style="text-align:center; margin-bottom: 4px;">🏆 Battle Pass</h3>
+    <div class="sub" style="text-align:center; margin-bottom: 20px;">Зарабатывай XP за хорошие оценки</div>
+    
+    <div style="background: var(--primary-soft); border-radius: 14px; padding: 16px; margin-bottom: 20px;">
+      <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 12px;">Как начисляется XP</div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+        <span>Оценка <b>5</b> (Урок)</span> <span style="color: #10b981; font-weight: 800;">+20 XP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+        <span>Оценка <b>5</b> (К/Р)</span> <span style="color: #10b981; font-weight: 800;">+50 XP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+        <span>Оценка <b>4</b> (Урок)</span> <span style="color: #10b981; font-weight: 800;">+10 XP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+        <span>Оценка <b>3</b> (Урок)</span> <span style="color: #ef4444; font-weight: 800;">-10 XP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+        <span>Оценка <b>3</b> (К/Р)</span> <span style="color: #ef4444; font-weight: 800;">-30 XP</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 14px;">
+        <span>Оценка <b>2</b> (К/Р)</span> <span style="color: #ef4444; font-weight: 800;">-50 XP</span>
+      </div>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; margin-bottom: 10px;">Награды за уровни</div>
+    
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="background: var(--bg); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between;">
+        <span>Уровень 5</span> <b style="color:#f59e0b;">Титул: Хорошист</b>
+      </div>
+      <div style="background: var(--bg); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between;">
+        <span>Уровень 10</span> <b style="color:#3b82f6;">Рамка: Неон</b>
+      </div>
+      <div style="background: var(--bg); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between;">
+        <span>Уровень 15</span> <b style="color:#ef4444;">Рамка: Огонь</b>
+      </div>
+      <div style="background: var(--bg); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between;">
+        <span>Уровень 20</span> <b style="color:#8b5cf6;">Рамка: Галактика</b>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top: 20px;">
+      <button class="action-btn cancel full" onclick="document.getElementById('battlePassModalBg').classList.remove('active')">Закрыть</button>
     </div>
   </div>
 </div>
@@ -3286,9 +3393,13 @@ function defaultState() {
     headerBgs: {}, avatarFrames: {}, customAvatars: {}, userProfiles: {},
     bgMedia: null,
     showWeekends: true, hideBadGrades: false, showRooms: true, showTeachers: true, autosaveInstant: true,
-    passwords: {}, deviceId: generateDeviceId(),
+    passwords: {}, deviceId: "dev_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
     proUntil: null,
-    appVersion: "2.1.0"  
+    appVersion: "2.1.0",
+    xp: 0, 
+    level: 1,
+    gameTitle: "Новичок",
+    gameFrame: "none"
   };
 }
 function generateDeviceId() { return "dev_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10); }
@@ -3296,6 +3407,10 @@ function generateDeviceId() { return "dev_" + Date.now() + "_" + Math.random().t
 function normalizeState(s) {
   const base = defaultState();
   const result = { ...base, ...(s || {}) };
+    if (result.xp === undefined) result.xp = 0;
+  if (result.level === undefined) result.level = 1;
+  if (!result.gameTitle) result.gameTitle = "Новичок";
+  if (!result.gameFrame) result.gameFrame = "none";
   if (!result.subjects || !Array.isArray(result.subjects)) result.subjects = [...SUBJECTS_DEFAULT];
   if (!result.gradesByQuarter || typeof result.gradesByQuarter !== "object") result.gradesByQuarter = { 1: {}, 2: {}, 3: {}, 4: {} };
   [1,2,3,4].forEach(q => { if (!result.gradesByQuarter[q] || typeof result.gradesByQuarter[q] !== "object") result.gradesByQuarter[q] = {}; });
@@ -3385,7 +3500,12 @@ function applyTheme() {
   if (!["light","dark","ocean","sakura","forest","amoled"].includes(theme)) theme = "light";
   document.documentElement.setAttribute("data-theme", theme);
   const btn = document.getElementById("themeBtn");
-  if (btn) btn.textContent = (theme === "light" || theme === "ocean" || theme === "sakura" || theme === "forest") ? "🌙" : "☀️";
+  if (btn) {
+  btn.innerHTML = (theme === "light" || theme === "ocean" || theme === "sakura" || theme === "forest")
+    ? '<i data-lucide="moon"></i>'
+    : '<i data-lucide="sun"></i>';
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
   updateThemeUI();
 }
 function toggleTheme() {
@@ -3685,6 +3805,49 @@ function selectType(type) {
 }
 
 function closeModal() { document.getElementById("modalBg").classList.remove("active"); }
+// ==================== СИСТЕМА XP И УРОВНЕЙ ====================
+function addXP(grade, type) {
+  if (!state) return;
+  
+  let xpChange = 0;
+  
+  // Логика начисления (5 и 4 дают плюс, 3/2/1 отнимают)
+  if (grade === 5) xpChange = (type === "kr") ? 50 : 20;
+  else if (grade === 4) xpChange = (type === "kr") ? 30 : 10;
+  else if (grade === 3) xpChange = (type === "kr") ? -30 : -10;
+  else if (grade === 2) xpChange = (type === "kr") ? -50 : -20;
+  else if (grade === 1) xpChange = (type === "kr") ? -80 : -30;
+
+  // Учитываем вес оценки, если это К/Р с кастомным весом
+  if (type === "kr") {
+    const weightInput = document.getElementById("gradeWeightInput");
+    let weight = parseFloat(weightInput.value) || 2;
+    if (grade >= 4) xpChange = Math.round(xpChange * (weight / 2));
+    else xpChange = Math.round(xpChange * weight);
+  }
+
+  state.xp += xpChange;
+  
+  // Защита от отрицательного XP
+  if (state.xp < 0) state.xp = 0;
+
+  // Проверяем повышение уровня (каждые 100 XP = 1 уровень)
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    updateLevelRewards(); // Выдаем награды
+    showToast("🏆 Новый уровень!", `Уровень ${state.level}. Награды обновлены!`);
+  } else if (newLevel < state.level) {
+    // ОТКАТ: Если уровень упал, награды забираются
+    state.level = newLevel;
+    updateLevelRewards(); 
+    showToast("📉 Уровень упал", "Вы потеряли достижения этого уровня.");
+  }
+
+  saveState();
+  updateGameUI(); // Обновляем полоску в настройках, если открыта
+}
 function saveGrade() {
   if (!gradeModal.grade) { alert("Выберите оценку!"); return; }
   const { subj, date, grade, type } = gradeModal;
@@ -3702,16 +3865,33 @@ function saveGrade() {
   
   if (comment) rec.comment = comment;
   grades[subj][date] = rec;
+    addXP(grade, type);
   
   saveState(); closeModal(); render();
 }
 function clearGrade() {
   const { subj, date } = gradeModal;
   const grades = state.gradesByQuarter[activeQuarter];
-  if (grades[subj]) { delete grades[subj][date]; if (!Object.keys(grades[subj]).length) delete grades[subj]; }
-  saveState(); closeModal(); render();
+  
+  // Если в этой ячейке есть оценка — мы её читаем перед удалением
+  if (grades[subj] && grades[subj][date]) {
+    const oldRec = parseGrade(grades[subj][date]);
+    
+    if (oldRec) {
+      // ХИТРОСТЬ: Мы передаем оценку с МИНУСОМ (например, -5). 
+      // В функции addXP логика сработает наоборот, и XP отнимется!
+      addXP(-oldRec.grade, oldRec.type); 
+    }
+    
+    // Само удаление
+    delete grades[subj][date]; 
+    if (!Object.keys(grades[subj]).length) delete grades[subj];
+  }
+  
+  saveState(); 
+  closeModal(); 
+  render();
 }
-document.getElementById("modalBg").addEventListener("click", e => { if (e.target.id === "modalBg") closeModal(); });
 
 function calcWeightedAvg(subjGrades) {
   let swv = 0, sw = 0;
@@ -4240,7 +4420,7 @@ function renderCal() {
 document.getElementById("calModalBg").addEventListener("click", e => { if (e.target.id === "calModalBg") closeCal(); });
 
 // ==================== ПРОФИЛЬ ====================
-function openProfileInternal() { clearModalStack(); renderProfileContent(); document.getElementById("profileModalBg").classList.add("active"); updateProUI(); }
+function openProfileInternal() { clearModalStack(); renderProfileContent(); document.getElementById("profileModalBg").classList.add("active"); updateProUI();  updateGameUI();}
 function openProfile() { openProfileInternal(); }
 function closeProfile() { document.getElementById("profileModalBg").classList.remove("active"); returnToParent(); }
 document.getElementById("profileModalBg").addEventListener("click", e => { if (e.target.id === "profileModalBg") closeProfile(); });
@@ -4288,6 +4468,7 @@ function renderSettings() {
     sub.textContent = `${pass.length} цифр · ${modeText}`;
   } else { title.textContent = "Установить пароль"; sub.textContent = "Защита входа в профиль"; }
   updateProUI();
+    updateGameUI();
 }
 function openEditProfile() {
   closeSettings(); pushModalParent("settings");
@@ -6342,18 +6523,16 @@ function calculateNewAvg(currentSum, currentWeight) {
   resultDiv.innerHTML = `Новый балл: ${newAvg.toFixed(2)} <br><span style="font-size: 12px; color: var(--text-soft); font-weight: 500;">(${diff > 0 ? '+' : ''}${diff.toFixed(2)} к текущему)</span>`;
 }
 
-// ==================== МЕНЮ ВЫБОРА ДЛЯ ПК ====================
 function openSubjectMenu(subj) {
-  // Проверяем, компьютер ли это
   const isDesktop = window.innerWidth > 768;
   
   if (!isDesktop) {
-    // Если телефон — открываем старую статистику сразу
-    openSubjectStats(subj);
+    // На телефоне — одно объединённое окно
+    openSubjectCombined(subj);
     return;
   }
 
-  // Если компьютер — открываем меню выбора
+  // На ПК — меню выбора (как было)
   let modal = document.getElementById("subjectMenuModal");
   if (modal) modal.remove();
 
@@ -6367,11 +6546,11 @@ function openSubjectMenu(subj) {
       
       <div style="display:flex; flex-direction:column; gap:12px;">
         <button class="action-btn done" style="padding:16px; font-size:16px;" onclick="document.getElementById('subjectMenuModal').classList.remove('active'); openExtendedStats('${subj}')">
-          <span class="ab-emoji">📊</span> Подробная статистика
+          <i data-lucide="bar-chart-2"></i> Подробная статистика
         </button>
         
         <button class="action-btn save" style="padding:16px; font-size:16px;" onclick="document.getElementById('subjectMenuModal').classList.remove('active'); openAdvancedCalc('${subj}')">
-          <span class="ab-emoji">🧮</span> Калькулятор оценок
+          <i data-lucide="calculator"></i> Калькулятор оценок
         </button>
       </div>
       
@@ -6380,6 +6559,189 @@ function openSubjectMenu(subj) {
   `;
   document.body.appendChild(modal);
   modal.classList.add("active");
+}
+
+// ==================== ОБЪЕДИНЁННОЕ ОКНО ПРЕДМЕТА (телефон) ====================
+function openSubjectCombined(subj) {
+  const sg = getCurrentGrades()[subj] || {};
+
+  let swv = 0, sw = 0, count = 0, krCount = 0;
+  let byGrade = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+  Object.values(sg).forEach(v => {
+    const p = parseGrade(v);
+    if (!p) return;
+    const w = getWeight(p);
+    swv += p.grade * w;
+    sw += w;
+    count++;
+    if (p.type === "kr") krCount++;
+    if (byGrade[p.grade] !== undefined) byGrade[p.grade]++;
+  });
+
+  const cur = sw > 0 ? swv / sw : 0;
+  const attThr = getAttestThreshold(subj);
+  const isAttested = count >= attThr;
+  const attestPct = Math.min(100, (count / attThr) * 100);
+
+  let color = "#10b981";
+  if (cur < 3.5) color = "#ef4444";
+  else if (cur < 4.5) color = "#f59e0b";
+
+  // Удаляем предыдущее окно, если было
+  let modal = document.getElementById("subjectCombinedModal");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "subjectCombinedModal";
+  modal.className = "modal-bg";
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:480px; text-align:left; max-height:90vh; overflow-y:auto;">
+      <h3 style="text-align:center; margin-bottom: 4px; font-size: 22px;">${subj}</h3>
+      <div class="sub" style="text-align:center; margin-bottom: 20px;">${activeQuarter} четверть</div>
+
+      <!-- БЛОК 1: Средний балл -->
+      <div style="background: var(--primary-soft); border-radius: 16px; padding: 18px; text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 44px; font-weight: 900; color: ${color}; line-height: 1;">${count > 0 ? cur.toFixed(2) : "—"}</div>
+        <div style="font-size: 11px; color: var(--text-soft); font-weight: 800; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px;">Средний балл</div>
+        <div style="display: flex; justify-content: center; gap: 16px; margin-top: 12px;">
+          <div style="font-size: 13px; color: var(--text-soft);">Всего: <b style="color: var(--text);">${count}</b></div>
+          <div style="font-size: 13px; color: var(--text-soft);">К/Р: <b style="color: var(--text);">${krCount}</b></div>
+        </div>
+      </div>
+
+      <!-- БЛОК 2: Аттестация -->
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+          <div style="font-weight: 800; font-size: 13px;">Аттестация</div>
+          <div style="padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: #fff; background: ${isAttested ? '#10b981' : '#ef4444'};">
+            ${isAttested ? 'ДОПУЩЕН' : 'НЕ ДОПУЩЕН'}
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px;">
+          Оценок: <b style="color: var(--text);">${count}</b> из <b style="color: var(--text);">${attThr}</b> необходимых
+        </div>
+        <div style="width:100%; height:8px; background:rgba(0,0,0,0.08); border-radius:8px; overflow:hidden;">
+          <div style="width:${attestPct}%; height:100%; border-radius:8px; background:${isAttested ? '#10b981' : '#ef4444'}; transition: width 1s ease;"></div>
+        </div>
+      </div>
+
+      <!-- БЛОК 3: Распределение оценок -->
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">Распределение</div>
+        ${[5,4,3,2,1].map(g => {
+          if (byGrade[g] === 0 && g < 3) return "";
+          const pct = count > 0 ? (byGrade[g] / count) * 100 : 0;
+          const maxVal = Math.max(byGrade[5], byGrade[4], byGrade[3], byGrade[2], 1);
+          const width = maxVal > 0 ? (byGrade[g] / maxVal) * 100 : 0;
+          const c = g === 5 ? "#2e7d32" : g === 4 ? "#558b2f" : g === 3 ? "#ef6c00" : g === 2 ? "#c62828" : "#7f0000";
+          return `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <div style="width: 18px; font-weight: 800; font-size: 13px; color: ${c};">${g}</div>
+              <div style="flex: 1; height: 16px; background: rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden;">
+                <div style="width: ${width}%; height: 100%; background: ${c}; border-radius: 6px; transition: width 0.8s ease;"></div>
+              </div>
+              <div style="width: 50px; text-align: right; font-weight: 700; font-size: 11px; color: var(--text-soft);">${byGrade[g]} (${Math.round(pct)}%)</div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+
+      <!-- БЛОК 4: Калькулятор -->
+      <div style="background: var(--primary-soft); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px;">Калькулятор</div>
+          <div style="font-size: 13px; color: var(--text-soft);">Новый балл: <b id="calcNewAvg" style="color: #10b981; font-size: 16px;">—</b></div>
+        </div>
+
+        <div id="calcAddedList" style="display:flex; flex-direction:column; gap:6px; margin-bottom: 12px;"></div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="calcAddGrade" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 15px; font-weight: bold; text-align: center; outline: none;">
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+          </select>
+          <select id="calcAddType" style="flex: 2; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 13px; font-weight: 600; outline: none;">
+            <option value="1">Урок (вес 1)</option>
+            <option value="2">К/Р (вес 2)</option>
+          </select>
+          <button onclick="calcAddGrade()" style="padding: 10px 18px; border-radius: 10px; border: none; background: var(--primary); color: #fff; font-size: 20px; font-weight: 700; cursor: pointer;">+</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="action-btn cancel full" onclick="document.getElementById('subjectCombinedModal').classList.remove('active')">Закрыть</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  modal.classList.add("active");
+
+  // Инициализируем состояние калькулятора для этого предмета
+  window._calcState = { baseSum: swv, baseWeight: sw, added: [], subj: subj };
+  calcRenderAdded();
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+// Добавить оценку в калькулятор
+function calcAddGrade() {
+  if (!window._calcState) return;
+  const g = parseInt(document.getElementById("calcAddGrade").value);
+  const w = parseInt(document.getElementById("calcAddType").value);
+  window._calcState.added.push({ grade: g, weight: w });
+  calcRenderAdded();
+}
+
+// Пересчитать и перерисовать список добавленных
+function calcRenderAdded() {
+  const st = window._calcState;
+  if (!st) return;
+
+  const list = document.getElementById("calcAddedList");
+  const avgEl = document.getElementById("calcNewAvg");
+  if (!list || !avgEl) return;
+
+  const added = st.added;
+
+  if (added.length === 0) {
+    list.innerHTML = `<div style="text-align:center; padding: 8px; color: var(--text-soft); font-size: 12px; font-style: italic;">Добавь оценки, чтобы посчитать новый балл</div>`;
+    avgEl.textContent = "—";
+    return;
+  }
+
+  let newSum = st.baseSum;
+  let newWeight = st.baseWeight;
+
+  list.innerHTML = added.map((item, idx) => {
+    newSum += item.grade * item.weight;
+    newWeight += item.weight;
+    const typeText = item.weight === 2 ? "К/Р" : "Урок";
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--panel); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);">
+        <div style="font-weight: 700; font-size: 13px;">Оценка: <span style="color: var(--primary); font-size: 15px;">${item.grade}</span> <span style="font-size: 11px; color: var(--text-soft);">(${typeText})</span></div>
+        <button onclick="calcRemoveGrade(${idx})" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer; padding: 0 4px;">✕</button>
+      </div>
+    `;
+  }).join("");
+
+  const finalAvg = newWeight > 0 ? newSum / newWeight : 0;
+  avgEl.textContent = finalAvg.toFixed(2);
+
+  // Красим в зависимости от значения
+  if (finalAvg < 3.5) avgEl.style.color = "#ef4444";
+  else if (finalAvg < 4.5) avgEl.style.color = "#f59e0b";
+  else avgEl.style.color = "#10b981";
+}
+
+// Удалить оценку из калькулятора
+function calcRemoveGrade(idx) {
+  if (!window._calcState) return;
+  window._calcState.added.splice(idx, 1);
+  calcRenderAdded();
 }
 
 // ==================== ПОДРОБНАЯ СТАТИСТИКА (ПК) ====================
@@ -6591,6 +6953,73 @@ function renderCalcList(baseSum, baseWeight) {
 function removeGradeFromCalc(index, baseSum, baseWeight) {
   window._calcState.added.splice(index, 1);
   renderCalcList(baseSum, baseWeight);
+}
+
+function updateLevelRewards() {
+  // 1. Выдаем титул
+  if (state.level >= 20) state.gameTitle = "Легенда школы";
+  else if (state.level >= 15) state.gameTitle = "Отличник";
+  else if (state.level >= 10) state.gameTitle = "Активист";
+  else if (state.level >= 5) state.gameTitle = "Хорошист";
+  else state.gameTitle = "Новичок";
+
+  // 2. Выдаем рамку
+  if (state.level >= 20) state.gameFrame = "galaxy";
+  else if (state.level >= 15) state.gameFrame = "fire";
+  else if (state.level >= 10) state.gameFrame = "neon";
+  else if (state.level >= 5) state.gameFrame = "glow";
+  else state.gameFrame = "none";
+  
+  // 3. Применяем рамку к аватарке (используя вашу систему)
+  if (!state.avatarFrames) state.avatarFrames = {};
+  state.avatarFrames[currentUser] = state.gameFrame;
+  
+  // Обновляем картинку в шапке и профиле
+  if (typeof applyAvatarFrame === "function") applyAvatarFrame();
+  if (typeof applyHeaderAvatar === "function") applyHeaderAvatar();
+}
+
+function updateGameUI() {
+  if (!state) return;
+  
+  // --- Обновляем циферки в Настройках ---
+  const lvlEl = document.getElementById("gameLevelText");
+  if (lvlEl) {
+    lvlEl.textContent = state.level;
+    
+    const titleEl = document.getElementById("gameTitleText");
+    if (titleEl) titleEl.textContent = state.gameTitle;
+    
+    // Считаем XP для полоски (от 0 до 100)
+    const currentLevelXp = state.xp % 100;
+    const xpEl = document.getElementById("gameXpText");
+    if (xpEl) xpEl.textContent = state.xp + " XP";
+    
+    const barEl = document.getElementById("gameXpBar");
+    if (barEl) barEl.style.width = currentLevelXp + "%";
+  }
+
+  // --- Обновляем переливающийся титул в Профиле ---
+  const pName = document.getElementById("profileName");
+  if (pName) {
+    let titleEl = document.getElementById("profileTitle");
+    
+    // Если такого элемента еще нет — создаем его
+    if (!titleEl) {
+      titleEl = document.createElement("div");
+      titleEl.id = "profileTitle";
+      // Стили градиента и анимации прямо в коде
+      titleEl.style.cssText = "font-size: 14px; font-weight: 800; margin-top: -8px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: titleShine 3s linear infinite;";
+      
+      // Вставляем прямо под именем (pName.nextSibling)
+      pName.parentNode.insertBefore(titleEl, pName.nextSibling);
+    }
+    titleEl.textContent = state.gameTitle;
+  }
+}
+
+function openBattlePassModal() {
+  document.getElementById("battlePassModalBg").classList.add("active");
 }
 
 // ==================== ЗАПУСК ====================
