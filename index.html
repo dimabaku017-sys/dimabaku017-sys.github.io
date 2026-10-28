@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   /* ===== ПЕРЕМЕННЫЕ ТЕМ ===== */
   :root {
@@ -3815,7 +3816,7 @@ function render() {
     tdName.style.background = "var(--panel)"; 
     tdName.style.cursor = "pointer"; 
     tdName.textContent = subj; 
-    tdName.onclick = () => openSubjectStats(subj); 
+        tdName.onclick = () => openSubjectMenu(subj);  
     tr.appendChild(tdName);
     dates.forEach(d => {
       const td = document.createElement("td"); td.className = "grade-cell";
@@ -6339,6 +6340,257 @@ function calculateNewAvg(currentSum, currentWeight) {
   resultDiv.style.display = "block";
   resultDiv.style.color = newAvg < 3.5 ? "#ef4444" : newAvg < 4.5 ? "#f59e0b" : "#10b981";
   resultDiv.innerHTML = `Новый балл: ${newAvg.toFixed(2)} <br><span style="font-size: 12px; color: var(--text-soft); font-weight: 500;">(${diff > 0 ? '+' : ''}${diff.toFixed(2)} к текущему)</span>`;
+}
+
+// ==================== МЕНЮ ВЫБОРА ДЛЯ ПК ====================
+function openSubjectMenu(subj) {
+  // Проверяем, компьютер ли это
+  const isDesktop = window.innerWidth > 768;
+  
+  if (!isDesktop) {
+    // Если телефон — открываем старую статистику сразу
+    openSubjectStats(subj);
+    return;
+  }
+
+  // Если компьютер — открываем меню выбора
+  let modal = document.getElementById("subjectMenuModal");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "subjectMenuModal";
+  modal.className = "modal-bg";
+  modal.innerHTML = `
+    <div class="modal" style="max-width:400px; text-align:center;">
+      <h3 style="margin-bottom: 4px;">${subj}</h3>
+      <div class="sub" style="margin-bottom: 24px;">Что вы хотите посмотреть?</div>
+      
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <button class="action-btn done" style="padding:16px; font-size:16px;" onclick="document.getElementById('subjectMenuModal').classList.remove('active'); openExtendedStats('${subj}')">
+          <span class="ab-emoji">📊</span> Подробная статистика
+        </button>
+        
+        <button class="action-btn save" style="padding:16px; font-size:16px;" onclick="document.getElementById('subjectMenuModal').classList.remove('active'); openAdvancedCalc('${subj}')">
+          <span class="ab-emoji">🧮</span> Калькулятор оценок
+        </button>
+      </div>
+      
+      <div class="actions"><button class="action-btn cancel full" onclick="document.getElementById('subjectMenuModal').classList.remove('active')">Отмена</button></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.classList.add("active");
+}
+
+// ==================== ПОДРОБНАЯ СТАТИСТИКА (ПК) ====================
+function openExtendedStats(subj) {
+  const sg = getCurrentGrades()[subj] || {};
+  
+  let swv = 0, sw = 0, count = 0;
+  let byGrade = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  let krCount = 0;
+  
+  Object.values(sg).forEach(v => { 
+    const p = parseGrade(v); 
+    if (p) { 
+      const w = getWeight(p); 
+      swv += p.grade * w; 
+      sw += w; 
+      count++;
+      if (p.type === 'kr') krCount++;
+      if (byGrade[p.grade] !== undefined) byGrade[p.grade]++;
+    } 
+  });
+  
+  if (count === 0) { showToast("📊 Статистика", "Нет оценок"); return; }
+
+  const cur = swv / sw;
+  const attThr = getAttestThreshold(subj);
+  const isAttested = count >= attThr;
+  const attestPct = Math.min(100, (count / attThr) * 100);
+
+  let color = "#10b981"; 
+  if (cur < 3.5) color = "#ef4444"; 
+  else if (cur < 4.5) color = "#f59e0b";
+
+  let modal = document.getElementById("extendedStatsModal");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "extendedStatsModal";
+  modal.className = "modal-bg";
+  
+  modal.innerHTML = `
+    <div class="modal" style="max-width:600px; text-align:left;">
+      <h3 style="text-align:center; margin-bottom: 4px; font-size: 24px;">${subj}</h3>
+      <div class="sub" style="text-align:center; margin-bottom: 24px;">${activeQuarter} четверть</div>
+      
+      <div style="display:flex; gap:16px; margin-bottom: 24px; flex-wrap: wrap;">
+        <!-- Левый блок: Оценки -->
+        <div style="flex: 1; min-width: 200px; background: var(--primary-soft); border-radius: 16px; padding: 20px; text-align: center;">
+          <div style="font-size: 48px; font-weight: 900; color: ${color}; line-height: 1;">${cur.toFixed(2)}</div>
+          <div style="font-size: 12px; color: var(--text-soft); font-weight: 800; text-transform: uppercase; margin-top: 8px;">Средний балл</div>
+          <div style="margin-top: 12px; font-size: 14px; font-weight: 600;">Всего: <b>${count}</b></div>
+          <div style="font-size: 12px; color: var(--text-soft); margin-top: 4px;">Контрольных: ${krCount}</div>
+        </div>
+
+        <!-- Правый блок: Аттестация -->
+        <div style="flex: 1; min-width: 200px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+            <div style="font-weight: 800; font-size: 14px;">Аттестация</div>
+            <div style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; color: #fff; background: ${isAttested ? '#10b981' : '#ef4444'};">
+              ${isAttested ? 'ДОПУЩЕН' : 'НЕ ДОПУЩЕН'}
+            </div>
+          </div>
+          
+          <div style="font-size: 13px; color: var(--text-soft); margin-bottom: 8px;">
+            Оценок: <b>${count}</b> из <b>${attThr}</b> необходимых
+          </div>
+          
+          <div style="width:100%; height:10px; background:rgba(0,0,0,0.1); border-radius:10px; overflow:hidden;">
+            <div style="width:${attestPct}%; height:100%; border-radius:10px; background:${isAttested ? '#10b981' : '#ef4444'}; transition: width 1s ease;"></div>
+          </div>
+        </div>
+      </div>
+
+            <!-- Распределение -->
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; margin-bottom: 12px;">Распределение оценок</div>
+        
+        ${[5,4,3,2,1].map(g => {
+          if (byGrade[g] === 0 && g < 3) return ""; 
+          const pct = count > 0 ? (byGrade[g] / count) * 100 : 0;
+          const maxVal = Math.max(byGrade[5], byGrade[4], byGrade[3], byGrade[2], 1);
+          const width = maxVal > 0 ? (byGrade[g] / maxVal) * 100 : 0;
+          const c = g === 5 ? "#2e7d32" : g === 4 ? "#558b2f" : g === 3 ? "#ef6c00" : g === 2 ? "#c62828" : "#7f0000";
+          
+          return `
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div style="width: 20px; font-weight: 800; font-size: 14px; color: ${c};">${g}</div>
+              <div style="flex: 1; height: 20px; background: rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden;">
+                <div style="width: ${width}%; height: 100%; background: ${c}; border-radius: 6px; transition: width 0.8s ease;"></div>
+              </div>
+              <div style="width: 60px; text-align: right; font-weight: 700; font-size: 12px; color: var(--text-soft);">${byGrade[g]} (${Math.round(pct)}%)</div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+
+      <div class="actions"><button class="action-btn cancel full" onclick="document.getElementById('extendedStatsModal').classList.remove('active')">Закрыть</button></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.classList.add("active");
+}
+
+// ==================== КАЛЬКУЛЯТОР (ПК) ====================
+function openAdvancedCalc(subj) {
+  const sg = getCurrentGrades()[subj] || {};
+  
+  let swv = 0, sw = 0;
+  Object.values(sg).forEach(v => { 
+    const p = parseGrade(v); 
+    if (p) { const w = getWeight(p); swv += p.grade * w; sw += w; } 
+  });
+  
+  const cur = sw > 0 ? swv / sw : 0;
+
+  let modal = document.getElementById("advancedCalcModal");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "advancedCalcModal";
+  modal.className = "modal-bg";
+  
+  modal.innerHTML = `
+    <div class="modal" style="max-width:440px; text-align:left;">
+      <h3 style="text-align:center; margin-bottom: 4px;">Калькулятор</h3>
+      <div class="sub" style="text-align:center; margin-bottom: 24px;">${subj}</div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; background: var(--primary-soft); padding: 16px; border-radius: 16px;">
+        <div>
+          <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase;">Текущий балл</div>
+          <div style="font-size: 24px; font-weight: 900; color: var(--primary);">${cur > 0 ? cur.toFixed(2) : '—'}</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase;">Новый балл</div>
+          <div style="font-size: 24px; font-weight: 900; color: #10b981;" id="newCalcAvg">—</div>
+        </div>
+      </div>
+
+      <!-- Список добавленных оценок -->
+      <div id="calcList" style="display:flex; flex-direction:column; gap:8px; margin-bottom: 16px;">
+        <!-- Сюда будут добавляться оценки -->
+      </div>
+
+      <!-- Добавление новой оценки -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <select id="addGrade" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 16px; font-weight: bold; text-align: center; outline: none;">
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+        </select>
+        <select id="addType" style="flex: 2; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 14px; font-weight: 600; outline: none;">
+          <option value="1">Урок (вес 1)</option>
+          <option value="2">К/Р (вес 2)</option>
+        </select>
+        <button class="btn green" onclick="addGradeToCalc(${swv}, ${sw})" style="padding: 12px 20px; font-size: 18px; border-radius: 10px;">+</button>
+      </div>
+
+      <div class="actions"><button class="action-btn cancel full" onclick="document.getElementById('advancedCalcModal').classList.remove('active')">Закрыть</button></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.classList.add("active");
+  
+  // Инициализируем внутренние переменные для калькулятора
+  window._calcState = { baseSum: swv, baseWeight: sw, added: [] };
+}
+
+// Функция добавления оценки в список калькулятора
+function addGradeToCalc(baseSum, baseWeight) {
+  const g = parseInt(document.getElementById("addGrade").value);
+  const w = parseInt(document.getElementById("addType").value);
+  
+  window._calcState.added.push({ grade: g, weight: w });
+  renderCalcList(baseSum, baseWeight);
+}
+
+// Пересчет и отрисовка списка
+function renderCalcList(baseSum, baseWeight) {
+  const list = document.getElementById("calcList");
+  const added = window._calcState.added;
+  
+  if (added.length === 0) {
+    list.innerHTML = `<div style="text-align:center; padding: 12px; color: var(--text-soft); font-size: 13px;">Добавь оценки, чтобы посчитать новый балл</div>`;
+    document.getElementById("newCalcAvg").textContent = "—";
+    return;
+  }
+
+  let newSum = baseSum;
+  let newWeight = baseWeight;
+  
+  list.innerHTML = added.map((item, idx) => {
+    newSum += item.grade * item.weight;
+    newWeight += item.weight;
+    const typeText = item.weight === 2 ? "К/Р" : "Урок";
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <div style="font-weight: 700; font-size: 14px;">Оценка: <span style="color: var(--primary); font-size: 16px;">${item.grade}</span> <span style="font-size: 12px; color: var(--text-soft);">(${typeText})</span></div>
+        <button onclick="removeGradeFromCalc(${idx}, ${baseSum}, ${baseWeight})" style="background: none; border: none; color: #ef4444; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+    `;
+  }).join("");
+
+  const finalAvg = newSum / newWeight;
+  document.getElementById("newCalcAvg").textContent = finalAvg.toFixed(2);
+}
+
+// Удаление оценки из списка
+function removeGradeFromCalc(index, baseSum, baseWeight) {
+  window._calcState.added.splice(index, 1);
+  renderCalcList(baseSum, baseWeight);
 }
 
 // ==================== ЗАПУСК ====================
