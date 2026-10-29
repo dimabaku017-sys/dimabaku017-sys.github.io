@@ -346,7 +346,7 @@
   @keyframes riskWarnPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: .85; } }
   .risk-bar .risk-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--orange) 40%, transparent), transparent); }
   .risk-items-grid { display: flex; flex-wrap: wrap; gap: 10px; position: relative; z-index: 1; }
-  .risk-card { flex: 1 1 220px; min-width: 220px; max-width: 320px; background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid color-mix(in srgb, var(--orange) 20%, transparent); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; transition: .25s var(--ease-bounce); animation: fadeIn .35s var(--ease) backwards; position: relative; overflow: hidden; cursor: default; }
+    .risk-card { flex: 1 1 220px; min-width: 220px; max-width: 320px; background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid color-mix(in srgb, var(--orange) 20%, transparent); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; transition: .25s var(--ease-bounce); animation: fadeIn .35s var(--ease) backwards; position: relative; overflow: hidden; cursor: default; }
   .risk-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px color-mix(in srgb, var(--orange) 20%, transparent); border-color: color-mix(in srgb, var(--orange) 50%, transparent); }
   .risk-card .rc-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .risk-card .rc-subj { font-weight: 700; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; min-width: 0; }
@@ -1935,28 +1935,58 @@
 </div>
 
 <div class="modal-bg" id="forecastModalBg">
-  <div class="modal" style="max-width:640px;">
-    <h3>🎯 Прогноз четвертной</h3>
-    <div class="sub" id="forecastSub">Расчёт для текущей четверти</div>
-    <div class="forecast-modal-head" id="forecastHead">
-      <div class="fmh-left"><span class="fmh-icon">📊</span><div class="fmh-info"><div class="fmh-title" id="fmhTitle">Четверть</div><div class="fmh-sub" id="fmhSub">Средневзвешенный балл</div></div></div>
-      <div class="fmh-count" id="fmhCount">0 предметов</div>
+  <div class="modal" style="max-width:650px; text-align:left; padding: 0; overflow: hidden; border-radius: 28px; background: var(--bg);">
+    
+    <!-- Шапка с градиентом -->
+    <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); padding: 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -50px; right: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
+      <div style="position: absolute; bottom: -40px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.08); border-radius: 50%; pointer-events: none;"></div>
+      
+      <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h3 style="color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px;">🎯 Прогноз оценок</h3>
+          <div style="color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500;" id="forecastSub">Аналитика для текущей четверти</div>
+        </div>
+        <button onclick="closeForecast()" style="background: rgba(255,255,255,0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</button>
+      </div>
     </div>
-    <div class="forecast-list" id="forecastList"></div>
-    <div class="actions"><button class="action-btn done full" onclick="closeForecast()"><span class="ab-emoji">✓</span> Закрыть</button></div>
+
+    <!-- Контент -->
+    <div style="padding: 24px; max-height: 60vh; overflow-y: auto;" id="forecastList">
+      <!-- Сюда рендерится JS -->
+    </div>
+
+    <div style="padding: 0 24px 24px;">
+      <button class="action-btn done full" style="width: 100%; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 800; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; color: #fff; box-shadow: 0 4px 15px rgba(139,92,246,0.3); cursor: pointer; transition: 0.2s;" onclick="closeForecast()">Закрыть</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-bg" id="attestationModalBg">
-  <div class="modal" style="max-width:520px;">
-    <h3>🏆 Аттестация</h3>
-    <div class="sub" id="attestationSub">Проверка допуска к четвертной оценке</div>
-    <div class="forecast-modal-head" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-      <div class="fmh-left"><span class="fmh-icon">🏆</span><div class="fmh-info"><div class="fmh-title" id="attestTitle">Аттестация</div><div class="fmh-sub" id="attestSub2">Пороги по количеству оценок</div></div></div>
-      <div class="fmh-count" id="attestCount">0</div>
+  <div class="modal" style="max-width:650px; text-align:left; padding: 0; overflow: hidden; border-radius: 28px; background: var(--bg);">
+    
+    <!-- Шапка с градиентом -->
+    <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -50px; right: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.15); border-radius: 50%; pointer-events: none;"></div>
+      <div style="position: absolute; bottom: -40px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
+      
+      <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h3 style="color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px;">🏆 Аттестация</h3>
+          <div style="color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500;" id="attestationSub">Допуск к итоговым оценкам</div>
+        </div>
+        <button onclick="closeAttestation()" style="background: rgba(255,255,255,0.25); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'">✕</button>
+      </div>
     </div>
-    <div class="attest-list" id="attestList"></div>
-    <div class="actions"><button class="action-btn done full" onclick="closeAttestation()"><span class="ab-emoji">✓</span> Закрыть</button></div>
+
+    <!-- Контент -->
+    <div style="padding: 24px; max-height: 60vh; overflow-y: auto;" id="attestList">
+      <!-- Сюда рендерится JS -->
+    </div>
+
+    <div style="padding: 0 24px 24px;">
+      <button class="action-btn done full" style="width: 100%; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #fff; box-shadow: 0 4px 15px rgba(245,158,11,0.3); cursor: pointer; transition: 0.2s;" onclick="closeAttestation()">Готово</button>
+    </div>
   </div>
 </div>
 
@@ -2504,6 +2534,23 @@
         </div>
       </div>
 
+            <!-- ОТОБРАЖЕНИЕ ВЫХОДНЫХ -->
+      <div class="settings-section" style="background: var(--panel); border-radius: 24px; padding: 8px 16px; margin-bottom: 16px; border: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 32px; height: 32px; border-radius: 10px; background: rgba(16,185,129,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px;">📅</div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; color: var(--text);">Выходные в расписании</div>
+              <div style="font-size: 12px; color: var(--text-soft);" id="weekendStatusText">Показываются</div>
+            </div>
+          </div>
+          <!-- Сам тумблер -->
+          <div class="toggle-switch" id="settingsWeekendToggle" onclick="toggleWeekendFromSettings(event)" style="width: 50px; height: 30px; border-radius: 15px; background: var(--border); position: relative; cursor: pointer; transition: 0.3s;">
+            <div style="width: 22px; height: 22px; border-radius: 50%; background: #fff; position: absolute; top: 4px; left: 4px; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- УВЕДОМЛЕНИЯ И PWA -->
       <div class="settings-section" style="background: var(--panel); border-radius: 24px; padding: 8px 16px; margin-bottom: 16px; border: none;">
         
@@ -2626,24 +2673,41 @@
 
 <!-- Модалка статистики по четвертям -->
 <div class="modal-bg" id="quartersStatsModalBg">
-  <div class="modal" style="max-width:600px; text-align:left;">
-    <h3 style="text-align:center;">📅 Статистика по четвертям</h3>
-    <div class="sub" style="text-align:center; margin-bottom:16px;">Выберите период для просмотра</div>
+  <div class="modal" style="max-width:650px; text-align:left; padding: 0; overflow: hidden; border-radius: 28px; background: var(--bg);">
     
-    <div style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;" id="qStatsBtns">
-      <button class="btn" onclick="renderQuarterStats(1)" id="qStatsBtn1">1 четв.</button>
-      <button class="btn" onclick="renderQuarterStats(2)" id="qStatsBtn2">2 четв.</button>
-      <button class="btn" onclick="renderQuarterStats(3)" id="qStatsBtn3">3 четв.</button>
-      <button class="btn" onclick="renderQuarterStats(4)" id="qStatsBtn4">4 четв.</button>
-      <button class="btn" onclick="renderQuarterStats('all')" id="qStatsBtnAll">За весь год</button>
+    <!-- Шапка с градиентом -->
+    <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 24px; position: relative; overflow: hidden;">
+      <!-- Декоративные круги на фоне -->
+      <div style="position: absolute; top: -50px; right: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
+      <div style="position: absolute; bottom: -40px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.08); border-radius: 50%; pointer-events: none;"></div>
+      
+      <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h3 style="color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px;">Статистика</h3>
+          <div style="color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500;">Аналитика успеваемости по четвертям</div>
+        </div>
+        <button onclick="closeQuartersStats()" style="background: rgba(255,255,255,0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</button>
+      </div>
     </div>
 
-    <div id="qStatsContent" style="background:var(--primary-soft); border-radius:12px; padding:16px; margin-bottom:16px;">
-      <!-- Сюда будут рендериться данные -->
+    <!-- Переключатель четвертей -->
+    <div style="padding: 20px 24px 0;">
+      <div style="display: flex; background: var(--panel); border-radius: 16px; padding: 6px; gap: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);" id="qStatsBtns">
+        <button class="q-tab-btn" onclick="renderQuarterStats(1)" id="qStatsBtn1" style="flex:1; padding: 10px; border: none; border-radius: 12px; background: transparent; color: var(--text-soft); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s var(--ease);">1 четв.</button>
+        <button class="q-tab-btn" onclick="renderQuarterStats(2)" id="qStatsBtn2" style="flex:1; padding: 10px; border: none; border-radius: 12px; background: transparent; color: var(--text-soft); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s var(--ease);">2 четв.</button>
+        <button class="q-tab-btn" onclick="renderQuarterStats(3)" id="qStatsBtn3" style="flex:1; padding: 10px; border: none; border-radius: 12px; background: transparent; color: var(--text-soft); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s var(--ease);">3 четв.</button>
+        <button class="q-tab-btn" onclick="renderQuarterStats(4)" id="qStatsBtn4" style="flex:1; padding: 10px; border: none; border-radius: 12px; background: transparent; color: var(--text-soft); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s var(--ease);">4 четв.</button>
+        <button class="q-tab-btn" onclick="renderQuarterStats('all')" id="qStatsBtnAll" style="flex:1.5; padding: 10px; border: none; border-radius: 12px; background: transparent; color: var(--text-soft); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s var(--ease);">Весь год</button>
+      </div>
     </div>
 
-    <div class="actions">
-      <button class="action-btn done full" onclick="closeQuartersStats()"><span class="ab-emoji">✓</span> Закрыть</button>
+    <!-- Контент -->
+    <div style="padding: 24px; max-height: 60vh; overflow-y: auto;" id="qStatsContent">
+      <!-- Сюда рендерится JS -->
+    </div>
+
+    <div style="padding: 0 24px 24px;">
+      <button class="action-btn done full" style="width: 100%; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: #fff; box-shadow: 0 4px 15px color-mix(in srgb, var(--primary) 30%, transparent); cursor: pointer; transition: 0.2s;" onclick="closeQuartersStats()">Закрыть</button>
     </div>
   </div>
 </div>
@@ -3797,6 +3861,33 @@ function plural5(n) {
 }
 const SUBJECT_EMOJI = { "Алгебра":"📐","Геометрия":"📏","Вероятность и статистика":"🎲","Русский язык":"📖","Литература":"📚","Физика":"⚛️","Химия":"🧪","История":"🏛️","Обществознание":"🌍","Английский язык":"🇬🇧","Биология":"🧬","География":"🗺️","Информатика":"💻","Физкультура":"⚽","ОБЖ":"🚨","Черчение":"✏️","Технология":"🔧" };
 function getSubjectEmoji(s) { return SUBJECT_EMOJI[s] || "📘"; }
+function getSubjectIconSVG(subj) {
+  // Иконки для предметов (цвет берем из обводки)
+  const icons = {
+    // Вместо крестика — стильная "пи" для Алгебры
+    "Алгебра": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5c-3 0-4 5-4 5s-1-5-4-5c-2 0-3 5-3 5v9m0-9h14"/></svg>`,
+    
+    "Геометрия": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22h20L12 2z"/></svg>`,
+    "Русский язык": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    "Литература": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    "Физика": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    "Химия": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 2v7.31"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>`,
+    "История": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    "Английский язык": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    "Биология": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M5 5c0 5 3 10 7 10s7-5 7-10"/><path d="M5 19c0-5 3-10 7-10s7 5 7 10"/></svg>`,
+    "География": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    "Информатика": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+    "Физкультура": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20z"/><path d="M2 12h20"/></svg>`,
+    "ОБЖ": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    "Вероятность и статистика": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>`,
+  };
+  
+  // Если предмета нет в списке, используем иконку книги
+  const path = icons[subj] || `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
+  
+  // Возвращаем иконку с фиксированным цветом текста (серый)
+  return `<div style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-soft);">${path}</div>`;
+}
 
 function showToast(title, text) {
   const wrap = document.getElementById("toastWrap"); if (!wrap) return;
@@ -4029,7 +4120,7 @@ function renderRiskBar() {
   wrap.innerHTML = top5.map((it, i) => {
     const pct = Math.min(100, Math.round((it.current / 5) * 100));
     const cls = it.current < 3 ? "low" : it.current < 4 ? "mid" : "high";
-    return `<div class="risk-card" style="animation-delay:${i*.05}s"><div class="rc-top"><div class="rc-subj"><span class="rc-emoji">${getSubjectEmoji(it.subj)}</span><span class="rc-subj-name">${escapeHtml(it.subj)}</span></div><div class="rc-avg ${cls}">${it.current.toFixed(2)}</div></div><div class="rc-progress"><div class="rc-progress-bar" style="width:${pct}%"></div></div><div class="rc-hint">до 3.50 нужно <span class="rc-need">${it.need}</span>${plural5(it.need)}</div></div>`;
+    return `<div class="risk-card" style="animation-delay:${i*.05}s; cursor: pointer;" onclick="openRiskCalculator('${it.subj}')"><div class="rc-top"><div class="rc-subj"><span class="rc-subj-name">${escapeHtml(it.subj)}</span></div><div class="rc-avg ${cls}">${it.current.toFixed(2)}</div></div><div class="rc-progress"><div class="rc-progress-bar" style="width:${pct}%"></div></div><div class="rc-hint">до 3.50 нужно <span class="rc-need">${it.need}</span>${plural5(it.need)}</div></div>`;
   }).join("");
 }
 function updateAvg() {
@@ -5012,46 +5103,116 @@ function drawStatsChart() {
 // ==================== ПРОГНОЗ ====================
 function openForecast() {
   if (!getProfile().showGrades) return;
-  const list = document.getElementById("forecastList"), sub = document.getElementById("forecastSub");
   
-  // Принудительно обновляем текст заголовка под текущую четверть
-  sub.textContent = `Расчёт для ${activeQuarter} четверти`;
-  
+  const list = document.getElementById("forecastList");
+  const sub = document.getElementById("forecastSub");
+  sub.textContent = `Аналитика для ${activeQuarter} четверти`;
+
   const grades = getCurrentGrades(), items = [];
+  
   state.subjects.forEach(subj => {
     const sg = grades[subj] || {};
     let swv = 0, sw = 0;
-    Object.values(sg).forEach(v => { const p = parseGrade(v); if (!p) return; const w = getWeight(p); swv += p.grade * w; sw += w; });
-    if (sw === 0) return;
+    Object.values(sg).forEach(v => { 
+        const p = parseGrade(v); if (!p) return; 
+        const w = getWeight(p); 
+        swv += p.grade * w; sw += w; 
+    });
+    if (sw === 0) return; // Если нет оценок, пропускаем
+    
     const cur = swv / sw;
-    const n5 = cur >= 4.5 ? 0 : Math.ceil((4.5 * sw - swv) / (5 - 4.5));
-    const n4 = cur >= 3.5 ? 0 : Math.ceil((3.5 * sw - swv) / (5 - 3.5));
+    // Сколько нужно пятёрок до 4.5
+    let n5 = 0;
+    if (cur < 4.5) {
+        while ((swv + 5 * n5) / (sw + n5) < 4.5) n5++;
+    }
+    // Сколько нужно четвёрок до 3.5
+    let n4 = 0;
+    if (cur < 3.5) {
+        while ((swv + 4 * n4) / (sw + n4) < 3.5) n4++;
+    }
+    
     items.push({ subj, current: cur, need5: n5, need4: n4 });
   });
-  items.sort((a, b) => a.current - b.current);
   
+  items.sort((a, b) => a.current - b.current);
+
   if (!items.length) { 
-    list.innerHTML = `<div class="remind-empty">Нет оценок в этой четверти.</div>`; 
+    list.innerHTML = `<div style="text-align:center; padding: 40px 20px; color: var(--text-soft); font-style: italic;">В этой четверти пока нет оценок.</div>`; 
     document.getElementById("forecastModalBg").classList.add("active"); 
     return; 
   }
-  
-  // Обновляем счетчик в синем блоке
-  document.getElementById("fmhTitle").textContent = `${activeQuarter} четверть`;
-  document.getElementById("fmhSub").textContent = `Предметов: ${items.length}`;
-  document.getElementById("fmhCount").textContent = `${items.length} предм.`;
-  
+
   list.innerHTML = items.map((it, i) => {
-    const cls = it.current >= 4.5 ? "green" : it.current >= 3.5 ? "orange" : "red";
+    // Определяем цвет и статус
+    let color = "#ef4444"; // красный
+    let statusText = "Требуется усилие";
+    if (it.current >= 4.5) { color = "#10b981"; statusText = "Отлично"; }
+    else if (it.current >= 3.5) { color = "#f59e0b"; statusText = "Хорошо"; }
+
     const pct = Math.min(100, Math.round((it.current / 5) * 100));
-    let lines = "";
-    if (it.need5 === 0) lines += `<div class="fi-ok">✅ Уже достаточно для «5»</div>`;
-    else lines += `<div class="fi-line"><span class="badge-need">${it.need5}</span><span>Нужно <b>${it.need5}</b> ${plural5(it.need5)} до 4.50</span></div>`;
-    if (it.need4 === 0) lines += `<div class="fi-ok">✅ Уже достаточно для «4»</div>`;
-    else lines += `<div class="fi-line"><span class="badge-need orange">${it.need4}</span><span>Нужно <b>${it.need4}</b> ${plural5(it.need4)} до 3.50</span></div>`;
-    return `<div class="forecast-item" style="animation-delay:${i*.03}s"><div class="fi-head"><div class="fi-subj"><span class="fi-emoji">${getSubjectEmoji(it.subj)}</span>${escapeHtml(it.subj)}</div><div class="fi-avg ${cls}">${it.current.toFixed(2)}</div></div><div class="fi-progress"><div class="fi-progress-bar" style="width:${pct}%"></div></div><div class="fi-lines">${lines}</div></div>`;
+    
+    // Генерируем блоки с целями
+    let goalsHtml = "";
+    
+    // Цель на 5 (4.50)
+    if (it.need5 === 0) {
+        goalsHtml += `
+        <div style="display:flex; align-items:center; gap:8px; background: rgba(16,185,129,0.1); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.2);">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</div>
+            <span style="font-size: 13px; font-weight: 600; color: #047857;">Цель на «5» достигнута</span>
+        </div>`;
+    } else {
+        goalsHtml += `
+        <div style="display:flex; align-items:center; gap:8px; background: var(--bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="background: #10b981; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">${it.need5}</div>
+            <span style="font-size: 13px; color: var(--text-soft);">оценок «5» до цели <b>4.50</b></span>
+        </div>`;
+    }
+
+    // Цель на 4 (3.50)
+    if (it.need4 === 0) {
+        goalsHtml += `
+        <div style="display:flex; align-items:center; gap:8px; background: rgba(16,185,129,0.1); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.2); margin-top: 6px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</div>
+            <span style="font-size: 13px; font-weight: 600; color: #047857;">Цель на «4» достигнута</span>
+        </div>`;
+    } else {
+        goalsHtml += `
+        <div style="display:flex; align-items:center; gap:8px; background: var(--bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); margin-top: 6px;">
+            <div style="background: #f59e0b; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">${it.need4}</div>
+            <span style="font-size: 13px; color: var(--text-soft);">оценок «4» до цели <b>3.50</b></span>
+        </div>`;
+    }
+
+    return `
+      <div style="background: var(--panel); border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s both;">
+        
+        <!-- Шапка карточки -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 18px;">${getSubjectEmoji(it.subj)}</div>
+            <div>
+              <div style="font-weight: 800; font-size: 15px; color: var(--text);">${escapeHtml(it.subj)}</div>
+              <div style="font-size: 11px; color: ${color}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${statusText}</div>
+            </div>
+          </div>
+          <div style="font-size: 20px; font-weight: 900; color: ${color};">${it.current.toFixed(2)}</div>
+        </div>
+
+        <!-- Прогресс-бар -->
+        <div style="width: 100%; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+          <div style="width: ${pct}%; height: 100%; background: ${color}; border-radius: 10px; transition: width 1s ease;"></div>
+        </div>
+
+        <!-- Блоки с целями -->
+        <div style="display: flex; flex-direction: column;">
+            ${goalsHtml}
+        </div>
+      </div>
+    `;
   }).join("");
-  
+
   document.getElementById("forecastModalBg").classList.add("active");
 }
 function closeForecast() { document.getElementById("forecastModalBg").classList.remove("active"); }
@@ -5060,27 +5221,83 @@ document.getElementById("forecastModalBg").addEventListener("click", e => { if (
 // ==================== АТТЕСТАЦИЯ ====================
 function openAttestation() {
   if (!getProfile().showGrades) return;
+  
   const list = document.getElementById("attestList");
-  document.getElementById("attestationSub").textContent = `Расчёт для ${activeQuarter} четверти`;
-  document.getElementById("attestTitle").textContent = `${activeQuarter} четверть`;
-  document.getElementById("attestSub2").textContent = "Пороги по количеству оценок";
-  const grades = getCurrentGrades(), items = [];
+  document.getElementById("attestationSub").textContent = `Допуск к оценкам за ${activeQuarter} четверть`;
+
+  const grades = getCurrentGrades();
+  const items = [];
+  
   state.subjects.forEach(subj => {
     const sg = grades[subj] || {};
     const cnt = Object.values(sg).filter(v => parseGrade(v)).length;
     const thr = getAttestThreshold(subj);
     items.push({ subj, count: cnt, threshold: thr, attested: cnt >= thr });
   });
-  items.sort((a, b) => { if (a.attested !== b.attested) return a.attested ? 1 : -1; return a.subj.localeCompare(b.subj, "ru"); });
+
+  // Сортируем: сначала те, кому не хватает оценок (красные наверх)
+  items.sort((a, b) => {
+    if (a.attested !== b.attested) return a.attested ? 1 : -1;
+    return a.subj.localeCompare(b.subj, "ru");
+  });
+
   const ok = items.filter(i => i.attested).length;
-  document.getElementById("attestCount").textContent = `${ok}/${items.length}`;
-  list.innerHTML = items.map((it, i) => {
+  
+  // Добавляем сводку (в стиле карточек сверху)
+  let html = `
+    <div style="background: var(--panel); border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center;">
+      <div style="font-size: 15px; font-weight: 800; color: var(--text);">Общий статус</div>
+      <div style="background: ${ok === items.length ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; color: ${ok === items.length ? '#047857' : '#b45309'}; padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 14px;">
+        ${ok} из ${items.length} допущено
+      </div>
+    </div>
+  `;
+
+    html += items.map((it, i) => {
     const pct = Math.min(100, Math.round(it.count / it.threshold * 100));
-    const sc = it.attested ? "ok" : "na";
-    const st = it.attested ? "✅ Аттестован" : "Н/А";
-    const left = it.attested ? `<span class="ai-ok">Хватает оценок</span>` : `<span class="ai-need">Не хватает ${it.threshold - it.count}</span>`;
-    return `<div class="attest-item" style="animation-delay:${i*.03}s"><div class="ai-top"><div class="ai-name"><span style="font-size:16px;">${getSubjectEmoji(it.subj)}</span>${escapeHtml(it.subj)}</div><div class="ai-status ${sc}">${st}</div></div><div class="ai-bar-wrap"><div class="ai-bar ${sc}" style="width:${pct}%"></div></div><div class="ai-meta"><span><b>${it.count}</b> / ${it.threshold} оценок</span>${left}</div></div>`;
+    const sc = it.attested ? "#10b981" : "#ef4444";
+    const bgSc = it.attested ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)";
+    const borderSc = it.attested ? "rgba(16,185,129,0.2)" : "rgba(239,68,68,0.2)";
+
+    return `
+      <div style="background: var(--panel); border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s both;">
+        
+        <!-- Верхняя строка (ТОЛЬКО Название и Статус) -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px;">
+          <div style="font-weight: 800; font-size: 15px; color: var(--text); line-height: 1.3;">${escapeHtml(it.subj)}</div>
+          <div style="background: ${bgSc}; border: 1px solid ${borderSc}; color: ${sc}; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;">
+            ${it.attested ? 'Допущен' : 'Не допущен'}
+          </div>
+        </div>
+
+        <!-- Нижняя строка с прогрессом -->
+        <div style="display: flex; align-items: center; gap: 16px;">
+          
+          <!-- Круговой прогресс -->
+          <div style="position: relative; width: 44px; height: 44px; flex-shrink: 0;">
+            <svg width="44" height="44" viewBox="0 0 44 44" style="transform: rotate(-90deg);">
+              <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg)" stroke-width="5"></circle>
+              <circle cx="22" cy="22" r="18" fill="none" stroke="${sc}" stroke-width="5" stroke-dasharray="113" stroke-dashoffset="${113 - (113 * pct / 100)}" stroke-linecap="round" style="transition: stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1);"></circle>
+            </svg>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: ${sc};">${pct}%</div>
+          </div>
+          
+          <!-- Текст -->
+          <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border);">
+            <div style="font-size: 13px; color: var(--text-soft);">
+              Оценок: <b style="color: var(--text); font-size: 14px;">${it.count}</b> / ${it.threshold}
+            </div>
+            <div style="font-size: 12px; font-weight: 700; color: ${sc};">
+              ${it.attested ? 'Хватает' : `Нужно ещё ${it.threshold - it.count}`}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
   }).join("");
+  list.innerHTML = html;
   document.getElementById("attestationModalBg").classList.add("active");
 }
 function closeAttestation() { document.getElementById("attestationModalBg").classList.remove("active"); }
@@ -5101,17 +5318,27 @@ document.getElementById("quartersStatsModalBg").addEventListener("click", e => {
 });
 
 function renderQuarterStats(period) {
-  // Подсветка кнопок
-  document.querySelectorAll("#qStatsBtns .btn").forEach(b => b.style.opacity = "0.6");
+  // 1. Подсветка активной кнопки-таба
+  document.querySelectorAll(".q-tab-btn").forEach(b => {
+    b.style.background = "transparent";
+    b.style.color = "var(--text-soft)";
+    b.style.boxShadow = "none";
+  });
+  
   const activeBtn = document.getElementById(period === "all" ? "qStatsBtnAll" : "qStatsBtn" + period);
-  if (activeBtn) activeBtn.style.opacity = "1";
+  if (activeBtn) {
+    activeBtn.style.background = "var(--primary)";
+    activeBtn.style.color = "#fff";
+    activeBtn.style.boxShadow = "0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent)";
+  }
 
+  // 2. Сбор данных
   let countKr = 0, count5 = 0, count4 = 0, count3 = 0, count2 = 0, countNA = 0;
   let sumWV = 0, sumW = 0, totalGrades = 0;
 
   const qList = period === "all" ? [1, 2, 3, 4] : [period];
 
-  // 1. Считаем оценки в журнале (для среднего балла и контрольных)
+  // Считаем оценки в журнале
   qList.forEach(q => {
     const grades = state.gradesByQuarter[q] || {};
     Object.values(grades).forEach(subjGrades => {
@@ -5127,11 +5354,10 @@ function renderQuarterStats(period) {
     });
   });
 
-  // 2. Считаем именно ЧЕТВЕРТНЫЕ оценки
+  // Считаем именно ЧЕТВЕРТНЫЕ оценки
   state.subjects.forEach(subj => {
     const qGrades = state.quarters[subj] || {};
     if (period === "all") {
-      // Если выбрано "За весь год" - показываем, сколько всего четвертных оценок выставлено
       [1, 2, 3, 4].forEach(q => {
         const qv = qGrades[q];
         if (qv === "NA") countNA++;
@@ -5141,7 +5367,6 @@ function renderQuarterStats(period) {
         else if (qv === 2) count2++;
       });
     } else {
-      // Если выбрана конкретная четверть - показываем только её
       const qv = qGrades[period];
       if (qv === "NA") countNA++;
       else if (qv === 5) count5++;
@@ -5151,48 +5376,103 @@ function renderQuarterStats(period) {
     }
   });
 
-  const avg = sumW > 0 ? (sumWV / sumW).toFixed(2) : "—";
+  const avg = sumW > 0 ? (sumWV / sumW) : 0;
+  const avgStr = avg > 0 ? avg.toFixed(2) : "—";
   const title = period === "all" ? "За весь учебный год" : `За ${period} четверть`;
+  
+  // Цвет для среднего балла
+  let avgColor = "#10b981";
+  if (avg > 0 && avg < 3.5) avgColor = "#ef4444";
+  else if (avg >= 3.5 && avg < 4.5) avgColor = "#f59e0b";
 
+  // 3. Генерация HTML
   const html = `
-    <div style="text-align:center; margin-bottom:16px;">
-      <div style="font-size:18px; font-weight:800; color:var(--primary); margin-bottom:4px;">${title}</div>
-      <div style="font-size:13px; color:var(--text-soft);">Всего текущих оценок: ${totalGrades}</div>
-    </div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
-      <div style="background:var(--panel); padding:12px; border-radius:10px; text-align:center;">
-        <div style="font-size:11px; color:var(--text-soft); text-transform:uppercase;">Средневзвешенный</div>
-        <div style="font-size:24px; font-weight:800; color:#2e7d32;">${avg}</div>
+    <!-- Верхние карточки -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+      
+      <!-- Средний балл -->
+      <div style="background: var(--panel); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: ${avgColor}15; border-radius: 50%;"></div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; position: relative;">Средний балл</div>
+        <div style="font-size: 42px; font-weight: 900; color: ${avgColor}; line-height: 1; position: relative;">${avgStr}</div>
       </div>
-      <div style="background:var(--panel); padding:12px; border-radius:10px; text-align:center;">
-        <div style="font-size:11px; color:var(--text-soft); text-transform:uppercase;">Контрольных</div>
-        <div style="font-size:24px; font-weight:800; color:#8e24aa;">${countKr}</div>
+
+      <!-- Контрольные -->
+      <div style="background: var(--panel); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: #8b5cf615; border-radius: 50%;"></div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; position: relative;">Контрольных</div>
+        <div style="font-size: 42px; font-weight: 900; color: #8b5cf6; line-height: 1; position: relative;">${countKr}</div>
       </div>
+
     </div>
 
-    <div style="background:var(--panel); padding:14px; border-radius:10px;">
-      <div style="font-size:12px; font-weight:700; color:var(--text-soft); text-transform:uppercase; margin-bottom:10px;">Четвертные оценки</div>
-      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span style="color:#2e7d32; font-weight:700;">Пятёрки (5):</span> <span>${count5}</span>
+    <!-- Распределение четвертных оценок -->
+    <div style="background: var(--panel); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="font-size: 14px; font-weight: 800; color: var(--text);">Итоговые оценки</div>
+        <div style="font-size: 11px; color: var(--text-soft); background: var(--bg); padding: 4px 10px; border-radius: 8px; font-weight: 600;">${period === "all" ? "Все четверти" : period + " четверть"}</div>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span style="color:#558b2f; font-weight:700;">Четвёрки (4):</span> <span>${count4}</span>
+      
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- Пятёрки -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #66bb6a, #2e7d32); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(46,125,50,0.3);">5</div>
+          <div style="flex: 1; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+            <div style="width: ${count5 > 0 ? Math.min(100, (count5 / (count5+count4+count3+count2+countNA || 1)) * 100) : 0}%; height: 100%; background: linear-gradient(90deg, #66bb6a, #2e7d32); border-radius: 10px; transition: width 1s ease;"></div>
+          </div>
+          <div style="font-weight: 800; font-size: 14px; color: var(--text); width: 20px; text-align: right;">${count5}</div>
+        </div>
+
+        <!-- Четвёрки -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #8bc34a, #558b2f); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(85,139,47,0.3);">4</div>
+          <div style="flex: 1; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+            <div style="width: ${count4 > 0 ? Math.min(100, (count4 / (count5+count4+count3+count2+countNA || 1)) * 100) : 0}%; height: 100%; background: linear-gradient(90deg, #8bc34a, #558b2f); border-radius: 10px; transition: width 1s ease;"></div>
+          </div>
+          <div style="font-weight: 800; font-size: 14px; color: var(--text); width: 20px; text-align: right;">${count4}</div>
+        </div>
+
+        <!-- Тройки -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #ffa726, #ef6c00); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(239,108,0,0.3);">3</div>
+          <div style="flex: 1; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+            <div style="width: ${count3 > 0 ? Math.min(100, (count3 / (count5+count4+count3+count2+countNA || 1)) * 100) : 0}%; height: 100%; background: linear-gradient(90deg, #ffa726, #ef6c00); border-radius: 10px; transition: width 1s ease;"></div>
+          </div>
+          <div style="font-weight: 800; font-size: 14px; color: var(--text); width: 20px; text-align: right;">${count3}</div>
+        </div>
+
+        <!-- Двойки -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #ef5350, #c62828); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 2px 8px rgba(198,40,40,0.3);">2</div>
+          <div style="flex: 1; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+            <div style="width: ${count2 > 0 ? Math.min(100, (count2 / (count5+count4+count3+count2+countNA || 1)) * 100) : 0}%; height: 100%; background: linear-gradient(90deg, #ef5350, #c62828); border-radius: 10px; transition: width 1s ease;"></div>
+          </div>
+          <div style="font-weight: 800; font-size: 14px; color: var(--text); width: 20px; text-align: right;">${count2}</div>
+        </div>
+
+        ${(period !== "all" || countNA > 0) ? `
+        <!-- Н/А -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--border);">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #78909c, #546e7a); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; box-shadow: 0 2px 8px rgba(84,110,122,0.3);">Н/А</div>
+          <div style="flex: 1; height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+            <div style="width: ${countNA > 0 ? Math.min(100, (countNA / (count5+count4+count3+count2+countNA || 1)) * 100) : 0}%; height: 100%; background: linear-gradient(90deg, #78909c, #546e7a); border-radius: 10px; transition: width 1s ease;"></div>
+          </div>
+          <div style="font-weight: 800; font-size: 14px; color: var(--text); width: 20px; text-align: right;">${countNA}</div>
+        </div>` : ""}
+
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span style="color:#ef6c00; font-weight:700;">Тройки (3):</span> <span>${count3}</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span style="color:#c62828; font-weight:700;">Двойки (2):</span> <span>${count2}</span>
-      </div>
-      ${(period !== "all" || countNA > 0) ? `
-      <div style="display:flex; justify-content:space-between; font-size:14px; border-top:1px dashed var(--border); padding-top:6px; margin-top:6px;">
-        <span style="color:#c62828; font-weight:700;">Н/А:</span> <span>${countNA}</span>
-      </div>` : ""}
     </div>
   `;
 
-  document.getElementById("qStatsContent").innerHTML = html;
+  // 4. Вставка с анимацией
+  const content = document.getElementById("qStatsContent");
+  content.innerHTML = html;
+  
+  // Небольшой хак для перезапуска анимации появления
+  content.style.animation = 'none';
+  content.offsetHeight; /* trigger reflow */
+  content.style.animation = 'slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
 }
 
 // ==================== ШАРИНГ ====================
@@ -6682,6 +6962,129 @@ function calculateNewAvg(currentSum, currentWeight) {
   resultDiv.style.display = "block";
   resultDiv.style.color = newAvg < 3.5 ? "#ef4444" : newAvg < 4.5 ? "#f59e0b" : "#10b981";
   resultDiv.innerHTML = `Новый балл: ${newAvg.toFixed(2)} <br><span style="font-size: 12px; color: var(--text-soft); font-weight: 500;">(${diff > 0 ? '+' : ''}${diff.toFixed(2)} к текущему)</span>`;
+}
+function openRiskCalculator(subj) {
+  const sg = getCurrentGrades()[subj] || {};
+  
+  let swv = 0, sw = 0, count = 0;
+  Object.values(sg).forEach(v => {
+    const p = parseGrade(v);
+    if (!p) return;
+    const w = getWeight(p);
+    swv += p.grade * w;
+    sw += w;
+    count++;
+  });
+
+  if (count === 0) return;
+  const curAvg = swv / sw;
+  
+  if (curAvg >= 3.50) {
+    showToast("🎯 Цель достигнута", "У вас уже балл выше 3.50");
+    return;
+  }
+
+  const target = 3.50;
+
+  // Функция точного расчета: сколько нужно получить оценок (вес 1)
+  function calcNeeded(grade) {
+    let n = 0;
+    while ((swv + grade * n) / (sw + n) < target) {
+      n++;
+      if (n > 100) break; 
+    }
+    return n;
+  }
+
+  const need5 = calcNeeded(5);
+  const need4 = calcNeeded(4);
+  
+  // Процент заполнения до цели
+  const progressPercent = Math.min(100, (curAvg / target) * 100);
+
+  let modal = document.getElementById("riskCalcModal");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "riskCalcModal";
+  modal.className = "modal-bg";
+  
+  modal.innerHTML = `
+    <div class="modal" style="max-width: 440px; text-align: left; padding: 24px;">
+      
+            <!-- Заголовок -->
+      <div style="text-align: center; margin-bottom: 24px; margin-top: 10px;">
+        <h3 style="margin-bottom: 6px; font-size: 22px;">${subj}</h3>
+        <div class="sub" style="margin-bottom: 0;">Цель: выйти на средний балл <b>3.50</b></div>
+      </div>
+
+      <!-- Визуализация прогресса -->
+      <div style="background: var(--bg); border-radius: 16px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-soft);">Текущий балл</div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-soft);">Цель</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+          <div style="font-size: 32px; font-weight: 900; color: ${curAvg < 2.5 ? '#ef4444' : '#f59e0b'}; line-height: 1;">${curAvg.toFixed(2)}</div>
+          <div style="font-size: 20px; font-weight: 800; color: #10b981; line-height: 1;">3.50</div>
+        </div>
+        
+        <!-- Полоска -->
+        <div style="width: 100%; height: 14px; background: rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; position: relative;">
+          <div style="width: ${progressPercent}%; height: 100%; background: linear-gradient(90deg, ${curAvg < 2.5 ? '#ef4444' : '#f59e0b'}, #10b981); border-radius: 10px; transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
+             <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 20px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));"></div>
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-soft); margin-top: 8px; text-align: center;">
+          Не хватает <b>${(target - curAvg).toFixed(2)}</b> балла до цели
+        </div>
+      </div>
+
+      <!-- Варианты оценок -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Что нужно получить?</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Вариант: Только 5 -->
+          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s; cursor: default;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #66bb6a, #2e7d32); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">5</div>
+              <div>
+                <div style="font-weight: 700; font-size: 14px; color: var(--text);">Только пятёрки</div>
+                <div style="font-size: 11px; color: var(--text-soft);">Обычные оценки за урок</div>
+              </div>
+            </div>
+            <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 14px; white-space: nowrap;">
+              ${need5} шт.
+            </div>
+          </div>
+
+          <!-- Вариант: Только 4 -->
+          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s; cursor: default;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8bc34a, #558b2f); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">4</div>
+              <div>
+                <div style="font-weight: 700; font-size: 14px; color: var(--text);">Только четвёрки</div>
+                <div style="font-size: 11px; color: var(--text-soft);">Обычные оценки за урок</div>
+              </div>
+            </div>
+            <div style="background: rgba(139,195,74,0.15); color: #558b2f; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 14px; white-space: nowrap;">
+              ${need4} шт.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Кнопка закрытия -->
+      <button class="action-btn cancel full" style="width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; background: var(--primary); color: #fff; border: none; cursor: pointer;" onclick="document.getElementById('riskCalcModal').classList.remove('active')">Всё понятно</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Небольшая задержка, чтобы сработала анимация полоски
+  requestAnimationFrame(() => {
+    modal.classList.add("active");
+  });
 }
 
 function openSubjectMenu(subj) {
