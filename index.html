@@ -69,38 +69,6 @@
     --orange-soft: #2a1f0a; --pink-soft: #2e0f24; --gold-soft: #2e2410;
     --header-grad-1: #0d47a1; --header-grad-2: #0a2e6e;
   }
-  [data-theme="ocean"] {
-    --primary: #0891b2; --primary-dark: #0e7490; --primary-soft: #cffafe;
-    --bg: #ecfeff; --panel: #ffffff; --text: #083344; --text-soft: #155e75;
-    --text-mute: #67e8f9; --border: #a5f3fc; --orange: #f59e0b; --orange-soft: #fef3c7;
-    --green: #10b981; --red: #ef4444; --purple: #06b6d4; --pink: #ec4899; --pink-soft: #fce7f3;
-    --header-grad-1: #0891b2; --header-grad-2: #155e75;
-    --mesh-1: #22d3ee; --mesh-2: #06b6d4; --mesh-3: #0ea5e9; --mesh-4: #67e8f9;
-  }
-  [data-theme="sakura"] {
-    --primary: #db2777; --primary-dark: #be185d; --primary-soft: #fce7f3;
-    --bg: #fdf2f8; --panel: #ffffff; --text: #500724; --text-soft: #831843;
-    --text-mute: #f9a8d4; --border: #fbcfe8; --orange: #f97316; --orange-soft: #ffedd5;
-    --green: #10b981; --red: #ef4444; --purple: #a855f7; --pink: #ec4899; --pink-soft: #fce7f3;
-    --header-grad-1: #db2777; --header-grad-2: #831843;
-    --mesh-1: #f472b6; --mesh-2: #ec4899; --mesh-3: #f9a8d4; --mesh-4: #fb7185;
-  }
-  [data-theme="forest"] {
-    --primary: #059669; --primary-dark: #047857; --primary-soft: #d1fae5;
-    --bg: #f0fdf4; --panel: #ffffff; --text: #052e16; --text-soft: #166534;
-    --text-mute: #86efac; --border: #bbf7d0; --orange: #f59e0b; --orange-soft: #fef3c7;
-    --green: #10b981; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --pink-soft: #fce7f3;
-    --header-grad-1: #059669; --header-grad-2: #064e3b;
-    --mesh-1: #34d399; --mesh-2: #10b981; --mesh-3: #6ee7b7; --mesh-4: #a7f3d0;
-  }
-  [data-theme="amoled"] {
-    --bg: #000000; --panel: #0a0a0a; --text: #ffffff; --text-soft: #a3a3a3;
-    --text-mute: #525252; --border: #1f1f1f; --primary: #3b82f6; --primary-dark: #2563eb;
-    --primary-soft: #0f172a; --orange: #f59e0b; --orange-soft: #1c1508;
-    --green: #10b981; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --pink-soft: #1a0a14;
-    --header-grad-1: #1e3a8a; --header-grad-2: #0f172a;
-    --mesh-1: #1e3a8a; --mesh-2: #312e81; --mesh-3: #4c1d95; --mesh-4: #0c4a6e;
-  }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
   body {
@@ -1696,6 +1664,43 @@
 .kr-impact.plus { color: #10b981; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2); }
 .kr-impact.minus { color: #ef4444; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.2); }
 .kr-impact.zero { color: #64748b; background: rgba(100,116,139,0.1); border: 1px solid rgba(100,116,139,0.2); }
+/* Стили для оценки с весом в стиле "Моя школа" */
+.kr-grade-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  margin-right: 6px; /* Отступ, чтобы бейдж веса не наезжал на текст */
+}
+
+.kr-grade-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 22px;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.kr-weight-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  background: #2563eb; /* Синий цвет как на фото */
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 2px solid var(--panel); /* Белая обводка */
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+  z-index: 2;
+  line-height: 1.2;
+}
 </style>
 </head>
 <body>
@@ -1905,7 +1910,16 @@
     </div>
   </div>
 
-  <div class="tab-content" id="tab-quarters">
+    <div class="tab-content" id="tab-quarters">
+        <div class="controls" style="margin-bottom: 12px; padding-right: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <div style="font-weight: 800; font-size: 15px; color: var(--text); display: flex; align-items: center; gap: 6px;">
+        🎓 Итоговые оценки
+      </div>
+      <button class="btn gold" onclick="openAttestat()" style="box-shadow: 0 4px 12px rgba(245,158,11,0.3); flex: 1; max-width: 250px; justify-content: center;">
+        📜 Скачать аттестат
+      </button>
+    </div>
+
     <div class="table-wrap">
       <table class="quarters-table" id="quartersTable">
         <thead><tr><th class="subject-col">Предмет</th><th>1 четв.<span class="quarter-weights">вес 1</span></th><th>2 четв.<span class="quarter-weights">вес 1</span></th><th>3 четв.<span class="quarter-weights">вес 2</span></th><th>4 четв.<span class="quarter-weights">вес 2</span></th><th>Годовая</th></tr></thead>
@@ -2571,13 +2585,9 @@
           <div style="font-size: 12px; font-weight: 800; color: var(--text-soft); letter-spacing: 1px; text-transform: uppercase;">Тема</div>
           <div style="font-size: 12px; font-weight: 700; color: var(--primary);" id="currentThemeName">Светлая</div>
         </div>
-        <div class="theme-options" id="themeOptions" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-          <button class="theme-btn-circle" data-theme="light" onclick="setTheme('light')" style="width: 48px; height: 48px; border-radius: 50%; background: #f5f7fb; border: 2px solid #e2e8f0; cursor: pointer;"></button>
-          <button class="theme-btn-circle" data-theme="dark" onclick="setTheme('dark')" style="width: 48px; height: 48px; border-radius: 50%; background: #0b0f1a; border: 2px solid #1e293b; cursor: pointer;"></button>
-          <button class="theme-btn-circle" data-theme="ocean" onclick="setTheme('ocean')" style="width: 48px; height: 48px; border-radius: 50%; background: #ecfeff; border: 2px solid #a5f3fc; cursor: pointer;"></button>
-          <button class="theme-btn-circle" data-theme="sakura" onclick="setTheme('sakura')" style="width: 48px; height: 48px; border-radius: 50%; background: #fdf2f8; border: 2px solid #fbcfe8; cursor: pointer;"></button>
-          <button class="theme-btn-circle" data-theme="forest" onclick="setTheme('forest')" style="width: 48px; height: 48px; border-radius: 50%; background: #f0fdf4; border: 2px solid #bbf7d0; cursor: pointer;"></button>
-          <button class="theme-btn-circle" data-theme="amoled" onclick="setTheme('amoled')" style="width: 48px; height: 48px; border-radius: 50%; background: #000; border: 2px solid #333; cursor: pointer;"></button>
+                <div class="theme-options" id="themeOptions" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+          <button class="theme-btn-circle" data-theme="light" onclick="setTheme('light')" style="width: 48px; height: 48px; border-radius: 50%; background: #f5f7fb; border: 2px solid #e2e8f0; cursor: pointer;" title="Светлая тема"></button>
+          <button class="theme-btn-circle" data-theme="dark" onclick="setTheme('dark')" style="width: 48px; height: 48px; border-radius: 50%; background: #0b0f1a; border: 2px solid #1e293b; cursor: pointer;" title="Темная тема"></button>
         </div>
       </div>
 
@@ -2911,13 +2921,13 @@ function setTheme(theme) {
 function updateThemeUI() {
   const cur = state.theme || "light";
   
-  // Подсвечиваем кружочки
+  // Подсвечиваем активный кружочек в настройках
   document.querySelectorAll(".theme-btn-circle").forEach(opt => {
     opt.classList.toggle("active", opt.dataset.theme === cur);
   });
 
-  // Меняем текст
-  const names = { light: "Светлая", dark: "Темная", ocean: "Океан", sakura: "Сакура", forest: "Лес", amoled: "AMOLED" };
+  // Меняем текст рядом с надписью "Тема"
+  const names = { light: "Светлая", dark: "Темная" };
   const nameEl = document.getElementById("currentThemeName");
   if (nameEl) nameEl.textContent = names[cur] || "Светлая";
 }
@@ -3673,24 +3683,34 @@ function getSchedule() {
 
 // ==================== ПРИМЕНЕНИЕ ====================
 function applyTheme() {
+  // Берем тему из состояния, если её нет — ставим светлую
   let theme = state && state.theme ? state.theme : "light";
-  if (!["light","dark","ocean","sakura","forest","amoled"].includes(theme)) theme = "light";
+  
+  // Жесткая страховка: если вдруг осталась старая тема (ocean/sakura), принудительно ставим светлую
+  if (theme !== "dark") {
+    theme = "light";
+  }
+  
   document.documentElement.setAttribute("data-theme", theme);
+  
+  // Меняем иконку на кнопке в шапке (Луна = переключить на темную, Солнце = на светлую)
   const btn = document.getElementById("themeBtn");
   if (btn) {
-  btn.innerHTML = (theme === "light" || theme === "ocean" || theme === "sakura" || theme === "forest")
-    ? '<i data-lucide="moon"></i>'
-    : '<i data-lucide="sun"></i>';
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-}
+    btn.innerHTML = (theme === "light") ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
   updateThemeUI();
 }
+
 function toggleTheme() {
+  // Читаем текущую тему с HTML-тега
   const cur = document.documentElement.getAttribute("data-theme");
-  const order = ["light","dark","ocean","sakura","forest","amoled"];
-  const idx = order.indexOf(cur);
-  state.theme = order[(idx + 1) % order.length];
-  saveState(); applyTheme();
+  
+  // Если сейчас светлая (или пусто) — ставим темную. Иначе — светлую.
+  state.theme = (cur === "light" || !cur) ? "dark" : "light";
+  
+  saveState(); 
+  applyTheme();
 }
 
 function getMondayOfDate(d) {
@@ -7971,15 +7991,22 @@ function openKRDetails() {
       if (it.impact > 0) { impactClass = "plus"; impactText = "+" + it.impact.toFixed(2); }
       else if (it.impact < 0) { impactClass = "minus"; impactText = it.impact.toFixed(2); }
 
-      return `
+            return `
         <div class="kr-card" style="animation-delay: ${i * 0.08}s">
           <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="kr-badge" style="background: linear-gradient(135deg, ${gColor}, color-mix(in srgb, ${gColor} 75%, #000));">
-              ${it.grade}
+            
+            <!-- НОВАЯ ОЦЕНКА С ВЕСОМ -->
+            <div class="kr-grade-wrap">
+              <div class="kr-grade-box" style="background: linear-gradient(135deg, ${gColor}, color-mix(in srgb, ${gColor} 75%, #000));">
+                ${it.grade}
+              </div>
+              <div class="kr-weight-badge">${it.weight}</div>
             </div>
+            
             <div>
               <div style="font-weight: 800; font-size: 15px; color: var(--text); margin-bottom: 2px;">${it.subj}</div>
-              <div style="font-size: 12px; color: var(--text-soft); font-weight: 500;">${it.date} · Вес: ${it.weight}</div>
+              <!-- Оставляем только дату, вес убрали отсюда -->
+              <div style="font-size: 12px; color: var(--text-soft); font-weight: 500;">${it.date}</div>
             </div>
           </div>
           <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
@@ -8021,6 +8048,197 @@ function openKRDetails() {
   
   // Плавное появление
   requestAnimationFrame(() => modal.classList.add("active"));
+}
+// ==================== ГЕНЕРАТОР АТТЕСТАТА ====================
+function openAttestat() {
+  const p = getProfile();
+  
+  // 1. Собираем данные по предметам (как было)
+  const items = [];
+  state.subjects.forEach(subj => {
+    const qGrades = state.quarters[subj] || {};
+    let sw = 0, ww = 0;
+    for (let q = 1; q <= 4; q++) {
+      const qv = qGrades[q];
+      if (qv && qv !== "NA") {
+        const w = QUARTER_WEIGHTS[q];
+        sw += qv * w;
+        ww += w;
+      }
+    }
+    const finalGrade = ww > 0 ? Math.round(sw / ww) : null;
+    const displayGrade = qGrades[activeQuarter] && qGrades[activeQuarter] !== "NA" 
+      ? qGrades[activeQuarter] 
+      : finalGrade;
+
+    if (displayGrade) {
+      items.push({ subj, grade: displayGrade });
+    }
+  });
+
+  if (!items.length) {
+    showToast("📜 Аттестат", "Нет выставленных оценок");
+    return;
+  }
+
+  items.sort((a, b) => a.subj.localeCompare(b.subj, "ru"));
+
+    // 2. НОВЫЕ РАЗМЕРЫ
+  const W = 800; 
+  const rowH = 60; 
+  const headerH = 180; 
+  const H = headerH + (items.length * rowH) + 140; // +140 для места под подпись и печать
+  
+  const canvas = document.createElement("canvas");
+  const scale = 2; // Для четкости
+  canvas.width = W * scale;
+  canvas.height = H * scale;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(scale, scale);
+
+  // 3. Фон и Рамки
+  ctx.fillStyle = "#fdfbf7";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = "#d4af37"; 
+  ctx.lineWidth = 8;
+  ctx.strokeRect(15, 15, W - 30, H - 30);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#b8860b";
+  ctx.strokeRect(28, 28, W - 56, H - 56);
+
+  // 4. Шапка
+  ctx.fillStyle = "#333";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  
+  ctx.font = "bold 38px 'Manrope', Arial";
+  ctx.fillText("📜 АТТЕСТАТ", W / 2, 55);
+  
+  ctx.font = "600 18px 'Manrope', Arial";
+  ctx.fillStyle = "#555";
+  ctx.fillText(`${p.school}`, W / 2, 110);
+  
+  ctx.font = "bold 26px 'Manrope', Arial";
+  ctx.fillStyle = "#111";
+  ctx.fillText(`${p.name}`, W / 2, 140);
+
+  // Линия под шапкой
+  ctx.beginPath();
+  ctx.moveTo(80, headerH - 10);
+  ctx.lineTo(W - 80, headerH - 10);
+  ctx.strokeStyle = "#d4af37";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 5. Список предметов
+  const startX = 70;
+  const endX = W - 70;
+  const startY = headerH + 20;
+
+  items.forEach((it, i) => {
+    const y = startY + (i * rowH);
+    
+    // Зебра
+    if (i % 2 === 0) {
+      ctx.fillStyle = "rgba(0,0,0,0.03)";
+      ctx.fillRect(startX - 10, y, (endX - startX) + 20, rowH);
+    }
+
+    // Предмет (слева)
+    ctx.textAlign = "left";
+    ctx.font = "600 22px 'Manrope', Arial"; // Чуть крупнее
+    ctx.fillStyle = "#222";
+    ctx.fillText(it.subj, startX, y + 18);
+
+    // Оценка и описание (справа)
+    ctx.textAlign = "right";
+    
+    let desc = "";
+    if (it.grade === 5) desc = "отлично";
+    else if (it.grade === 4) desc = "хорошо";
+    else if (it.grade === 3) desc = "удовл.";
+    else desc = "неудовл.";
+
+    // Цифра
+    ctx.font = "bold 26px 'Manrope', Arial";
+    ctx.fillStyle = it.grade >= 4 ? "#2e7d32" : it.grade === 3 ? "#ef6c00" : "#c62828";
+    ctx.fillText(`${it.grade}`, endX - 220, y + 16);
+
+    // Текст
+    ctx.font = "italic 20px 'Manrope', Arial";
+    ctx.fillStyle = "#666";
+    ctx.fillText(`(${desc})`, endX, y + 18);
+  });
+
+    // 6. Подвал (подпись и печать на самом холсте)
+  const footerY = H - 80; // Отступ 80 пикселей от самого низа
+  const leftX = startX;
+  const rightX = endX;
+
+  // Дата формирования (слева)
+  ctx.textAlign = "left";
+  ctx.font = "16px 'Manrope', Arial";
+  ctx.fillStyle = "#555";
+  ctx.fillText(`Дата формирования: ${formatDate(new Date())}`, leftX, footerY);
+
+  // Директор (справа)
+  ctx.textAlign = "right";
+  ctx.font = "italic 18px 'Manrope', Arial";
+  ctx.fillStyle = "#333";
+  ctx.fillText("Директор: Соломаха И. В.", rightX, footerY);
+
+  // 7. Конвертация в картинку
+  const dataUrl = canvas.toDataURL("image/png");
+  
+  let modal = document.getElementById("attestatModalBg");
+  if (modal) modal.remove();
+
+  modal = document.createElement("div");
+  modal.id = "attestatModalBg";
+  modal.className = "modal-bg";
+  modal.onclick = (e) => { if (e.target.id === "attestatModalBg") modal.classList.remove("active"); };
+  
+  // Вставляем картинку + делаем "липкую" подпись внизу экрана
+  modal.innerHTML = `
+    <div class="modal" style="max-width:850px; text-align:center; padding: 20px; display: flex; flex-direction: column; max-height: 92vh;">
+      
+      <h3 style="margin-bottom: 4px; flex-shrink: 0;">📜 Аттестат сформирован</h3>
+      <div class="sub" style="margin-bottom: 16px; flex-shrink: 0;">Вы можете сохранить его на устройство</div>
+      
+      <!-- Сама картинка со скроллом -->
+      <div style="flex: 1; overflow-y: auto; background: #e0e0e0; border-radius: 12px; padding: 10px; margin-bottom: 16px;">
+        <img src="${dataUrl}" alt="Аттестат" style="max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+      </div>
+      
+            <!-- Кнопки всегда внизу -->
+      <div style="background: var(--panel); border-radius: 12px; padding: 12px; flex-shrink: 0; border: 1px solid var(--border);">
+        <div class="actions" style="margin-top: 0;">
+          <button class="action-btn save full" onclick="downloadAttestat('${dataUrl}')">
+            <span class="ab-emoji">💾</span> Скачать картинку
+          </button>
+          <button class="action-btn cancel full" onclick="document.getElementById('attestatModalBg').classList.remove('active')">
+            <span class="ab-emoji">✕</span> Закрыть
+          </button>
+        </div>
+      </div>
+      
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.classList.add("active"));
+}
+
+// Функция скачивания
+function downloadAttestat(dataUrl) {
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = `Аттестат_${getProfile().name.replace(/\\s+/g, '_')}_${activeQuarter}четв.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast("💾 Сохранено", "Аттестат сохранен в галерею");
 }
 
 // Перехватываем клики по меню, чтобы двигать капсулу
