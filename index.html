@@ -5888,16 +5888,23 @@ function generateShareImage() {
     if (name !== it.subj) name += "…";
     ctx.fillText(name, padX + 14, ry + (rowH - 6) / 2);
 
-    // Оценки
-    const gsX = padX + 280, bs = 32, gap = 6, mg = Math.min(it.grades.length, 9);
+            // Оценки (ОПТИМАЛЬНЫЙ РАЗМЕР ДЛЯ 12 ШТУК)
+    const gsX = padX + 250; // Сдвинули еще чуть-чуть левее
+    const bs = 29; // Увеличили размер квадратика (было 26, стало 29)
+    const gap = 4; // Отступ оставили прежним
+    const mg = Math.min(it.grades.length, 12); // Максимум 12 оценок
+    
     for (let i = 0; i < mg; i++) {
       const g = it.grades[i], bx = gsX + i * (bs + gap), by = ry + ((rowH - 6) - bs) / 2;
       const grd = ctx.createLinearGradient(bx, by, bx + bs, by + bs);
       if (g.grade >= 4) { grd.addColorStop(0, "#66bb6a"); grd.addColorStop(1, "#2e7d32"); }
       else if (g.grade === 3) { grd.addColorStop(0, "#ffa726"); grd.addColorStop(1, "#ef6c00"); }
       else { grd.addColorStop(0, "#ef5350"); grd.addColorStop(1, "#c62828"); }
-      ctx.fillStyle = grd; roundRect(ctx, bx, by, bs, bs, 8); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.font = "bold 16px 'Manrope', Arial"; ctx.textAlign = "center";
+      ctx.fillStyle = grd; roundRect(ctx, bx, by, bs, bs, 6); ctx.fill(); // Скругление оставили 6
+      
+      ctx.fillStyle = "#fff"; 
+      ctx.font = "bold 16px 'Manrope', Arial"; // Вернули шрифт 16px
+      ctx.textAlign = "center";
       ctx.fillText(String(g.grade), bx + bs / 2, by + bs / 2 + 1);
     }
 
