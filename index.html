@@ -2,6 +2,19 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<!-- ЗАЩИТА ОТ XSS АТАК -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: blob: https:;
+  media-src 'self' data: blob:;
+  connect-src 'self' https://cdn.jsdelivr.net;
+  frame-ancestors 'none';
+  base-uri 'self';
+  form-action 'self';
+">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Дневник.ру</title>
 <link rel="icon" type="image/png" href="icon.png">
@@ -3118,6 +3131,21 @@ function hideAuthMsg() {
   document.getElementById("authError").classList.remove("active");
   document.getElementById("authSuccess").classList.remove("active");
 }
+// ==================== ХЕШИРОВАНИЕ ПАРОЛЕЙ ====================
+async function hashPassword(password) {
+  // Добавляем "соль" — секретное слово, чтобы хеш был уникальным
+  const salt = "diary_secret_salt_2026";
+  const msgBuffer = new TextEncoder().encode(password + salt);
+  
+  // Используем встроенный в браузер алгоритм SHA-256
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  
+  // Превращаем байты в строку из 16-ричных чисел
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return hashHex; // Возвращаем длинную строку (например, "a3f5...")
+}
 function validateEmail(email) { return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email); }
 function validatePhone(phone) { return /^(\+7|8)\s\d{3}\s\d{3}-\d{2}-\d{2}$/.test(phone); }
 function validateClass(cls) { return /^(1[01]|[1-9])[АБВГДЕЁЖЗ]$/.test(cls.trim().toUpperCase().replace(/\s+/g, "")); }
@@ -3136,7 +3164,8 @@ async function doLogin() {
   if (!password) return showAuthError("Введите пароль");
   const user = getUsers().find(u => u.email.toLowerCase() === email);
   if (!user) return showAuthError("Пользователь не найден");
-  if (user.password !== password) return showAuthError("Неверный пароль");
+    const hashedInput = await hashPassword(password);
+  if (user.password !== hashedInput) return showAuthError("Неверный пароль");
   setCurrentUser(user.email);
   showAuthSuccess("Вход выполнен! Открываем дневник...");
   if (rememberMeChecked) saveRememberMe(user.email);
@@ -3165,8 +3194,9 @@ async function doRegister() {
   if (!password) return showAuthError("Введите пароль");
   if (password.length < 6) return showAuthError("Пароль минимум 6 символов");
   if (getUsers().find(u => u.email.toLowerCase() === email)) return showAuthError("Почта уже зарегистрирована");
+  const hashedPassword = await hashPassword(password);
   const newUser = {
-    email, password, fio, class: cls, school, phone, birth,
+    email, password: hashedPassword, fio, class: cls, school, phone, birth,
     isTestUser: false, customSubjects: [], customSchedule: null,
     customBells: null, customBellsCount: 7, saturdayOff: true, createdAt: Date.now()
   };
@@ -4380,7 +4410,7 @@ function renderSchedule() {
           const done = state.hwDone[hwKey] || false;
           const pb = hwPhotos.length ? `<span class="photo-badge">📷${hwPhotos.length}</span>` : "";
           html += `<div class="hw-row"><button class="hw-btn ${hwText||hwPhotos.length?"has-hw":""}" onclick="openHW(${day},${slot},'${dk}')">📝 ${hwText||hwPhotos.length?"Д/З":"Задать"}${pb}</button></div>`;
-          if (hwText) html += `<div class="hw-text ${done?"done":""}" onclick="toggleHWDone('${hwKey}')" title="Клик — отметить выполненным">${escapeHtml(hwText)}</div>`;
+          if (hwText) html += `<div class="hw-text ${done?"done":""}" onclick="toggleHWDone(${JSON.stringify(hwKey)})" title="Клик — отметить выполненным">${escapeHtml(hwText)}</div>`;
           if (hwPhotos.length) {
             html += `<div>`;
             if (hwPhotos.length === 1) html += `<img class="hw-photo-thumb" src="${hwPhotos[0]}" onclick="viewHWPhoto('${hwKey}',0)" alt="фото">`;
@@ -4998,7 +5028,7 @@ function renderReminders() {
   wrap.innerHTML = items.map(r => {
     const d = new Date(r.ts), past = r.fired || r.ts < now;
     const ds = formatDate(d), ts = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
-    return `<div class="remind-item ${past ? "past" : ""}"><div class="ri-time">${ds}<br>${ts}</div><div class="ri-text">${escapeHtml(r.text)}</div><button class="ri-del" title="Удалить" onclick="deleteReminder('${r.id}')">✕</button></div>`;
+   return `<div class="remind-item ${past ? "past" : ""}"><div class="ri-time">${ds}<br>${ts}</div><div class="ri-text">${escapeHtml(r.text)}</div><button class="ri-del" title="Удалить" onclick="deleteReminder(${JSON.stringify(r.id)})">✕</button></div>`;
   }).join("");
   updateRemindBadge();
 }
