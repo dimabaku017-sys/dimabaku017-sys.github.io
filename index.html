@@ -142,17 +142,25 @@
   [data-theme="dark"] .bg-media-overlay, [data-theme="amoled"] .bg-media-overlay { opacity: 0.55; }
   .mesh-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; transition: opacity .3s var(--ease); }
   .mesh-bg.hidden { opacity: 0; }
-  .mesh-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55; will-change: transform; }
-  .mesh-blob.b1 { width: 520px; height: 520px; background: radial-gradient(circle, var(--mesh-1) 0%, transparent 70%); top: -10%; left: -8%; animation: meshFloat1 26s ease-in-out infinite; }
-  .mesh-blob.b2 { width: 480px; height: 480px; background: radial-gradient(circle, var(--mesh-2) 0%, transparent 70%); top: 30%; right: -10%; animation: meshFloat2 32s ease-in-out infinite; }
-  .mesh-blob.b3 { width: 560px; height: 560px; background: radial-gradient(circle, var(--mesh-3) 0%, transparent 70%); bottom: -15%; left: 25%; animation: meshFloat3 38s ease-in-out infinite; }
-  .mesh-blob.b4 { width: 420px; height: 420px; background: radial-gradient(circle, var(--mesh-4) 0%, transparent 70%); top: 55%; left: 5%; animation: meshFloat4 30s ease-in-out infinite; }
+  .mesh-blob { position: absolute; border-radius: 50%; filter: blur(55px); opacity: 0.32; will-change: transform; }
+  .mesh-blob.b1 { width: 300px; height: 300px; background: radial-gradient(circle, var(--mesh-1) 0%, transparent 70%); top: -6%; left: -5%; animation: meshFloat1 26s ease-in-out infinite; }
+  .mesh-blob.b2 { width: 280px; height: 280px; background: radial-gradient(circle, var(--mesh-2) 0%, transparent 70%); top: 26%; right: -6%; animation: meshFloat2 32s ease-in-out infinite; }
+  .mesh-blob.b3 { width: 320px; height: 320px; background: radial-gradient(circle, var(--mesh-3) 0%, transparent 70%); bottom: -10%; left: 18%; animation: meshFloat3 38s ease-in-out infinite; }
+  .mesh-blob.b4 { width: 240px; height: 240px; background: radial-gradient(circle, var(--mesh-4) 0%, transparent 70%); top: 50%; left: 2%; animation: meshFloat4 30s ease-in-out infinite; }
+
+  [data-theme="dark"] .mesh-blob, [data-theme="amoled"] .mesh-blob { opacity: 0.20; }
   @keyframes meshFloat1 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(80px,60px) scale(1.15);} 66%{transform:translate(40px,120px) scale(.95);} }
   @keyframes meshFloat2 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(-100px,40px) scale(1.1);} 66%{transform:translate(-40px,-60px) scale(1.2);} }
   @keyframes meshFloat3 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(60px,-80px) scale(1.1);} 66%{transform:translate(-60px,-40px) scale(.9);} }
   @keyframes meshFloat4 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(100px,-60px) scale(1.2);} }
   [data-theme="dark"] .mesh-blob, [data-theme="amoled"] .mesh-blob { opacity: 0.35; }
-  @media (max-width: 768px) { .mesh-blob { filter: blur(60px); } .mesh-blob.b1, .mesh-blob.b2 { width: 340px; height: 340px; } .mesh-blob.b3 { width: 380px; height: 380px; } .mesh-blob.b4 { width: 300px; height: 300px; } }
+   @media (max-width: 768px) {
+    .mesh-blob { filter: blur(40px); opacity: 0.26; }
+    .mesh-blob.b1 { width: 170px; height: 170px; }
+    .mesh-blob.b2 { width: 150px; height: 150px; }
+    .mesh-blob.b3 { width: 190px; height: 190px; }
+    .mesh-blob.b4 { width: 130px; height: 130px; }
+  }
 
   /* ===== ЗАМОК ===== */
   .lock-screen { position: fixed; inset: 0; z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20, 30, 50, 0.35); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); animation: lockFadeIn .5s var(--ease); }
@@ -1713,9 +1721,218 @@
   z-index: 2;
   line-height: 1.2;
 }
+
+  /* ===== ЗИМНЕЕ ОФОРМЛЕНИЕ ===== */
+  :root {
+    --winter-ice: #dff4ff;
+    --winter-snow: #f8fcff;
+    --winter-blue: #8fc9ed;
+  }
+  body {
+    background-image:
+      radial-gradient(ellipse at 8% 12%, rgba(190, 226, 248, .16), transparent 34%),
+      radial-gradient(ellipse at 92% 78%, rgba(214, 239, 252, .18), transparent 36%);
+  }
+  [data-theme="dark"] body, [data-theme="amoled"] body {
+    background-image:
+      radial-gradient(ellipse at 8% 12%, rgba(72, 132, 174, .12), transparent 34%),
+      radial-gradient(ellipse at 92% 78%, rgba(90, 150, 190, .10), transparent 36%);
+  }
+  .app { z-index: 1; }
+  .header { isolation: isolate; }
+  .winter-garland {
+    position: absolute; z-index: 2; left: 12px; right: 12px; top: 0;
+    height: 25px; pointer-events: none; opacity: .96;
+  }
+  .winter-garland::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -10px; height: 25px;
+    border-bottom: 2px solid rgba(225, 244, 255, .75);
+    border-radius: 0 0 50% 50%;
+    transform: scaleY(.72);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.18));
+  }
+  .winter-bulbs {
+    position: absolute; inset: 8px 4% auto; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .winter-bulb {
+    display: block; width: 7px; height: 10px; border-radius: 50% 50% 45% 45%;
+    background: var(--bulb-color, #ffe7a3);
+    box-shadow: 0 0 5px 2px var(--bulb-glow, rgba(255,231,163,.55));
+    animation: winterTwinkle var(--twinkle, 2.4s) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes winterTwinkle {
+    from { opacity: .55; filter: brightness(.85); transform: scale(.88); }
+    to { opacity: 1; filter: brightness(1.25); transform: scale(1.08); }
+  }
+  #winterSnow {
+    position: fixed; inset: 0; z-index: 1000; overflow: hidden;
+    pointer-events: none; contain: strict;
+  }
+  .winter-flake {
+    position: absolute; top: -12px; left: var(--x); width: var(--size); height: var(--size);
+    border-radius: 50%; background: rgba(255,255,255,var(--alpha));
+    box-shadow: 0 0 5px rgba(220,244,255,.45);
+    animation: winterFall var(--duration) linear var(--delay) infinite;
+    will-change: transform;
+  }
+  @keyframes winterFall {
+    0% { transform: translate3d(0,-5vh,0); }
+    25% { transform: translate3d(var(--drift),25vh,0); }
+    50% { transform: translate3d(calc(var(--drift) * -.45),50vh,0); }
+    75% { transform: translate3d(var(--drift),75vh,0); }
+    100% { transform: translate3d(0,110vh,0); }
+  }
+  .winter-snowbank {
+    position: fixed; z-index: 20; bottom: -2px; left: -3vw; width: 106vw; height: 118px;
+    pointer-events: none; opacity: .98;
+    background:
+      radial-gradient(ellipse 19% 65% at 4% 100%, #fff 0 68%, transparent 71%),
+      radial-gradient(ellipse 23% 78% at 23% 108%, #f8fcff 0 68%, transparent 71%),
+      radial-gradient(ellipse 20% 68% at 43% 108%, #fff 0 68%, transparent 71%),
+      radial-gradient(ellipse 25% 86% at 66% 110%, #f7fbff 0 68%, transparent 71%),
+      radial-gradient(ellipse 23% 72% at 88% 108%, #fff 0 68%, transparent 71%),
+      linear-gradient(to bottom, transparent 38%, rgba(255,255,255,.98) 82%);
+    filter: drop-shadow(0 -5px 12px rgba(144,190,218,.24));
+  }
+  .winter-snowbank::before, .winter-snowbank::after {
+    content: ""; position: absolute; bottom: 14px; width: 42vw; height: 78px; border-radius: 50% 50% 0 0;
+    background: radial-gradient(ellipse at 50% 100%, #fff 0 62%, rgba(255,255,255,.88) 70%, transparent 73%);
+  }
+  .winter-snowbank::before { left: 7vw; }
+  .winter-snowbank::after { right: 5vw; height: 96px; bottom: 8px; }
+  [data-theme="dark"] .winter-snowbank, [data-theme="amoled"] .winter-snowbank { opacity: .9; }
+  [data-theme="dark"] .winter-snowbank::before, [data-theme="dark"] .winter-snowbank::after,
+  [data-theme="amoled"] .winter-snowbank::before, [data-theme="amoled"] .winter-snowbank::after { opacity: .92; }
+  .winter-icicles { position:absolute; z-index:4; top:17px; left:2%; right:2%; height:40px; display:flex; justify-content:space-around; align-items:flex-start; pointer-events:none; }
+  .winter-icicles i { display:block; width:clamp(5px, .8vw, 10px); height:var(--icicle-h); margin-top:var(--icicle-top,0px); background:linear-gradient(90deg,rgba(177,225,248,.45),#f4fcff 45%,rgba(150,211,242,.7)); clip-path:polygon(0 0,100% 0,88% 72%,50% 100%,12% 72%); filter:drop-shadow(0 2px 2px rgba(80,150,190,.25)); border-radius:0 0 50% 50%; }
+  .header .winter-garland { height: 56px; }
+  .header .winter-bulbs { top:7px; }
+  .theme-btn, .avatar-btn { position:relative; overflow:visible; }
+  .theme-btn::before, .avatar-btn::before { content:""; position:absolute; z-index:8; top:-4px; left:-3px; right:-3px; height:12px; border-radius:50% 50% 45% 45%; background:linear-gradient(180deg,#fff 0%,#f5fbff 70%,#d9effb 100%); box-shadow:0 2px 5px rgba(91,151,187,.28); pointer-events:none; }
+  .avatar-btn::before { top:-3px; left:-2px; right:-2px; height:13px; }
+  .avatar-btn::after { content:""; position:absolute; z-index:9; top:5px; right:5px; width:10px; height:15px; background:linear-gradient(90deg,#d7effb,#fff,#b6def2); clip-path:polygon(0 0,100% 0,85% 75%,50% 100%,15% 75%); pointer-events:none; }
+  .hw-text {
+    cursor: pointer; transition: background .2s ease, color .2s ease, opacity .2s ease,
+      border-color .2s ease, transform .2s ease;
+  }
+  .hw-text.done {
+    text-decoration: line-through !important; text-decoration-thickness: 1.5px;
+    text-decoration-color: currentColor; color: var(--text-mute) !important;
+    background: color-mix(in srgb, var(--panel) 78%, var(--winter-ice)) !important;
+    border-left-color: var(--green) !important; opacity: .72;
+  }
+  .hw-text.done:hover { transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .winter-flake, .winter-bulb { animation: none !important; }
+    .winter-flake { display: none; }
+  }
+  @media (max-width: 600px) {
+    .winter-garland { left: 8px; right: 8px; }
+    .winter-bulb { width: 6px; height: 8px; }
+    .winter-snowbank { height: 86px; }
+    .winter-icicles { top: 19px; }
+    .winter-icicles i { width: 5px; }
+  }
+
+/* Снежинки на кнопках */
+.btn.winter::after {
+  content: "❄";
+  position: absolute;
+  top: 3px;
+  right: 7px;
+  font-size: 9px;
+  opacity: 0.55;
+  pointer-events: none;
+  line-height: 1;
+}
+.btn.winter:hover::after { opacity: 0.9; }
+
+  /* ===== ИСПРАВЛЕНИЯ ЗИМЫ ===== */
+  
+  /* 1. Сугробы внизу */
+  .bg-layer { height: 100vh !important; overflow: hidden !important; }
+  .bg-layer img, .bg-layer svg, .bg-layer .snowdrift, .bg-layer [class*="snow"], .bg-layer [class*="drift"] {
+    max-height: 15vh !important; 
+    width: 100% !important;
+    object-fit: cover !important;
+    bottom: 0 !important;
+    position: absolute !important;
+  }
+
+  /* 2. Сосульки в шапке */
+  .header { position: relative; overflow: hidden !important; }
+  .header [class*="icicle"], .header [class*="snow"], .header svg[class*="icicle"], .header img[class*="icicle"] {
+    position: absolute !important;
+    top: 0 !important;
+    margin-top: 0 !important;
+    height: auto !important;
+  }
+
+  /* 3. Снег на иконках в углу (тема и аватар) */
+  .theme-btn::before, .theme-btn::after, .avatar-btn::before, .avatar-btn::after {
+    content: none !important;
+    display: none !important;
+  }
+  .theme-btn, .avatar-btn {
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  /* 4. Снежинки на кнопках */
+  .btn {
+    position: relative;
+  }
+  .btn::after {
+    content: "❄";
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    font-size: 11px;
+    opacity: 0.6;
+    pointer-events: none;
+    color: white;
+  }
+  .quarter-switcher .arrow::after {
+    content: none !important;
+  }
+  /* ===== ЭКСТРЕННОЕ ИСПРАВЛЕНИЕ СУГРОБОВ ===== */
+  
+  /* 1. Поднимаем нижнее меню ВЫШЕ сугробов */
+  /* (Если у вашего меню другой класс, например .nav-bar, напишите мне) */
+  .bottom-nav, .nav-bar, .tabs-bar, .mobile-nav {
+    position: relative !important;
+    z-index: 9999 !important; /* Кнопки будут поверх сугроба */
+  }
+
+  /* 2. Опускаем сугробы на самый задний план */
+  /* Ищем любые элементы, в названии которых есть слово snow или drift */
+  .bg-layer, 
+  [class*="snow"], 
+  [class*="drift"], 
+  [class*="sugrob"] {
+    z-index: -1 !important; /* Отправляем за фон */
+    pointer-events: none !important; /* Чтобы они не перекрывали клики */
+  }
+
+  /* 3. Если сугроб - это картинка (img), делаем его полупрозрачным и меньше */
+  img[class*="snow"], 
+  img[class*="drift"],
+  .bg-layer img {
+    opacity: 0.4 !important; /* Делаем бледным, чтобы не мешал */
+    max-height: 12vh !important; /* Уменьшаем высоту */
+    bottom: 0 !important;
+    object-fit: cover !important;
+  }
 </style>
 </head>
 <body>
+<div id="winterSnow" aria-hidden="true"></div>
+<div class="winter-snowbank" aria-hidden="true"></div>
+
 
 <div id="authScreen" class="active" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);">
   <!-- Светящиеся пятна -->
@@ -1844,6 +2061,27 @@
 
 <div class="app">
     <div class="header" id="mainHeader">
+    <div class="winter-garland" aria-hidden="true">
+      <div class="winter-icicles">
+        <i style="--icicle-h:15px"></i><i style="--icicle-h:27px;--icicle-top:2px"></i>
+        <i style="--icicle-h:11px;--icicle-top:1px"></i><i style="--icicle-h:34px"></i>
+        <i style="--icicle-h:19px;--icicle-top:3px"></i><i style="--icicle-h:29px;--icicle-top:1px"></i>
+        <i style="--icicle-h:13px"></i><i style="--icicle-h:24px;--icicle-top:2px"></i>
+        <i style="--icicle-h:36px"></i><i style="--icicle-h:16px;--icicle-top:2px"></i>
+        <i style="--icicle-h:26px"></i><i style="--icicle-h:12px;--icicle-top:1px"></i>
+      </div>
+      <div class="winter-bulbs">
+        <i class="winter-bulb" style="--bulb-color:#ffe29a;--bulb-glow:rgba(255,226,154,.7);--delay:-.2s"></i>
+        <i class="winter-bulb" style="--bulb-color:#b9f2ff;--bulb-glow:rgba(185,242,255,.7);--delay:-1s"></i>
+        <i class="winter-bulb" style="--bulb-color:#ffb8c8;--bulb-glow:rgba(255,184,200,.7);--delay:-.6s"></i>
+        <i class="winter-bulb" style="--bulb-color:#c7f5c4;--bulb-glow:rgba(199,245,196,.7);--delay:-1.4s"></i>
+        <i class="winter-bulb" style="--bulb-color:#ffe29a;--bulb-glow:rgba(255,226,154,.7);--delay:-.9s"></i>
+        <i class="winter-bulb" style="--bulb-color:#b9f2ff;--bulb-glow:rgba(185,242,255,.7);--delay:-.4s"></i>
+        <i class="winter-bulb" style="--bulb-color:#ffb8c8;--bulb-glow:rgba(255,184,200,.7);--delay:-1.7s"></i>
+        <i class="winter-bulb" style="--bulb-color:#c7f5c4;--bulb-glow:rgba(199,245,196,.7);--delay:-.1s"></i>
+      </div>
+    </div>
+    
     <div class="header-left">
       <div class="logo"><i data-lucide="book-open"></i></div>
       <div>
@@ -4409,7 +4647,10 @@ function renderSchedule() {
           const done = state.hwDone[hwKey] || false;
           const pb = hwPhotos.length ? `<span class="photo-badge">📷${hwPhotos.length}</span>` : "";
           html += `<div class="hw-row"><button class="hw-btn ${hwText||hwPhotos.length?"has-hw":""}" onclick="openHW(${day},${slot},'${dk}')">📝 ${hwText||hwPhotos.length?"Д/З":"Задать"}${pb}</button></div>`;
-          if (hwText) html += `<div class="hw-text ${done?"done":""}" onclick="toggleHWDone(${JSON.stringify(hwKey)})" title="Клик — отметить выполненным">${escapeHtml(hwText)}</div>`;
+          if (hwText) {
+             const safeHwKey = String(hwKey).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+             html += `<div class="hw-text ${done ? "done" : ""}" role="button" tabindex="0" aria-pressed="${done ? "true" : "false"}" onclick="toggleHWDone('${safeHwKey}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHWDone('${safeHwKey}');}" title="Клик — отметить выполненным">${escapeHtml(hwText)}</div>`;
+           }
           if (hwPhotos.length) {
             html += `<div>`;
             if (hwPhotos.length === 1) html += `<img class="hw-photo-thumb" src="${hwPhotos[0]}" onclick="viewHWPhoto('${hwKey}',0)" alt="фото">`;
@@ -4528,7 +4769,18 @@ function clearHW() {
   saveState(); closeHW(); renderSchedule();
 }
 function closeHW() { document.getElementById("hwModalBg").classList.remove("active"); hwPhotosTemp = []; document.getElementById("ocrStatus").classList.remove("active"); }
-function toggleHWDone(hwKey) { state.hwDone[hwKey] = !state.hwDone[hwKey]; if (!state.hwDone[hwKey]) delete state.hwDone[hwKey]; saveState(); renderSchedule(); }
+function toggleHWDone(hwKey) {
+  if (!state || !hwKey) return;
+  if (state.hwDone[hwKey]) delete state.hwDone[hwKey];
+  else state.hwDone[hwKey] = true;
+  // Мгновенно фиксируем отметку в localStorage; основной механизм IndexedDB
+  // остаётся активным и синхронизирует полное состояние приложения.
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {
+    console.warn("Не удалось сохранить отметку Д/З в localStorage:", e);
+  }
+  saveState();
+  renderSchedule();
+}
 document.getElementById("hwModalBg").addEventListener("click", e => { if (e.target.id === "hwModalBg") closeHW(); });
 function insertHwTemplate(text) {
   const ta = document.getElementById("hwText");
@@ -8300,5 +8552,34 @@ window.addEventListener("resize", () => {
   if (activeBtn) updateLiquidSlider(activeBtn);
 });
 </script>
+
+<script>
+/* ===== ЗИМНИЙ СНЕГОПАД ===== */
+(() => {
+  const initWinterSnow = () => {
+    const layer = document.getElementById("winterSnow");
+    if (!layer || layer.dataset.ready) return;
+    layer.dataset.ready = "1";
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const count = window.matchMedia && window.matchMedia("(max-width: 600px)").matches ? 78 : 145;
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+      const flake = document.createElement("span");
+      flake.className = "winter-flake";
+      flake.style.setProperty("--x", `${Math.random() * 100}%`);
+      flake.style.setProperty("--size", `${2 + Math.random() * 6}px`);
+      flake.style.setProperty("--alpha", `${0.48 + Math.random() * 0.5}`);
+      flake.style.setProperty("--duration", `${7 + Math.random() * 13}s`);
+      flake.style.setProperty("--delay", `${-Math.random() * 28}s`);
+      flake.style.setProperty("--drift", `${-65 + Math.random() * 130}px`);
+      fragment.appendChild(flake);
+    }
+    layer.appendChild(fragment);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initWinterSnow, { once: true });
+  else initWinterSnow();
+})();
+</script>
+
 </body>
 </html>
